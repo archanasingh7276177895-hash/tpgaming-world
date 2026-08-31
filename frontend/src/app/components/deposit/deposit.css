@@ -1,0 +1,135 @@
+.deposit-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  color: #fff;
+  font-family: sans-serif;
+}
+
+.qr-card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.qr-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  border: 4px solid #3b82f6;
+}
+
+.upi-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: #0f172a;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.btn-copy {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quick-buttons button {
+  background: #334155;
+  color: white;
+  border: 1px solid #475569;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quick-buttons button.active {
+  background: #2563eb;
+  border-color: #60a5fa;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: white;
+  box-sizing: border-box;
+}
+
+.btn-submit {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+}
+
+.success-msg {
+  color: #34d399;
+  padding: 8px;
+  background: rgba(52, 211, 153, 0.1);
+  border-radius: 6px;
+}
+
+.error-msg {
+  color: #f87171;
+  padding: 8px;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 6px;
+}
+
+.history-section {
+  margin-top: 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-badge.pending { background: #eab308; color: #000; }
+.status-badge.approved { background: #22c55e; color: #fff; }
+.status-badge.rejected { background: #ef4444; color: #fff; }

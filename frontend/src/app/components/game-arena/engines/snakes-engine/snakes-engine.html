@@ -1,0 +1,204 @@
+<div class="snakes-stage-wrapper">
+  
+  <!-- Player Dice Docks -->
+  <div 
+    class="player-dock dock-top-left" 
+    *ngIf="players[0]?.isActive"
+    [class.dock-active]="currentTurnIndex === 0"
+    [class.dock-eliminated]="players[0]?.isEliminated"
+    [class.dock-winner]="players[0]?.isFinished"
+    (click)="rollDice(0)">
+    <div class="dock-badge green-badge">
+      <span class="dock-user-label">{{ players[0].username }}</span>
+      <div class="strike-dots" *ngIf="!players[0]?.isFinished">
+        <span class="dot" [class.missed]="players[0].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[0].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[0].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 0 && !players[0]?.isEliminated && !players[0]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[0]?.isFinished">Rank #{{ players[0]?.rank || 1 }} 👑</span>
+    </div>
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 0 && !players[0]?.isEliminated && !players[0]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[0]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[0]?.isFinished" class="finished-txt">100!</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-top-right" 
+    *ngIf="players[1]?.isActive"
+    [class.dock-active]="currentTurnIndex === 1"
+    [class.dock-eliminated]="players[1]?.isEliminated"
+    [class.dock-winner]="players[1]?.isFinished"
+    (click)="rollDice(1)">
+    <div class="dock-badge yellow-badge">
+      <span class="dock-user-label">{{ players[1].username }}</span>
+      <div class="strike-dots" *ngIf="!players[1]?.isFinished">
+        <span class="dot" [class.missed]="players[1].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[1].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[1].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 1 && !players[1]?.isEliminated && !players[1]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[1]?.isFinished">Rank #{{ players[1]?.rank || 1 }} 👑</span>
+    </div>
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 1 && !players[1]?.isEliminated && !players[1]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[1]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[1]?.isFinished" class="finished-txt">100!</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-bottom-right" 
+    *ngIf="players[2]?.isActive"
+    [class.dock-active]="currentTurnIndex === 2"
+    [class.dock-eliminated]="players[2]?.isEliminated"
+    [class.dock-winner]="players[2]?.isFinished"
+    (click)="rollDice(2)">
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 2 && !players[2]?.isEliminated && !players[2]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[2]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[2]?.isFinished" class="finished-txt">100!</span>
+    </div>
+    <div class="dock-badge blue-badge">
+      <span class="dock-user-label">{{ players[2].username }}</span>
+      <div class="strike-dots" *ngIf="!players[2]?.isFinished">
+        <span class="dot" [class.missed]="players[2].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[2].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[2].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 2 && !players[2]?.isEliminated && !players[2]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[2]?.isFinished">Rank #{{ players[2]?.rank || 1 }} 👑</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-bottom-left" 
+    *ngIf="players[3]?.isActive"
+    [class.dock-active]="currentTurnIndex === 3"
+    [class.dock-eliminated]="players[3]?.isEliminated"
+    [class.dock-winner]="players[3]?.isFinished"
+    (click)="rollDice(3)">
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[3]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[3]?.isFinished" class="finished-txt">100!</span>
+    </div>
+    <div class="dock-badge red-badge">
+      <span class="dock-user-label">{{ players[3].username }}</span>
+      <div class="strike-dots" *ngIf="!players[3]?.isFinished">
+        <span class="dot" [class.missed]="players[3].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[3].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[3].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[3]?.isFinished">Rank #{{ players[3]?.rank || 1 }} 👑</span>
+    </div>
+  </div>
+
+  <!-- 10x10 Board Container -->
+  <div class="snakes-board">
+    <div class="start-dock">
+      <span class="start-label">START (Roll 1 to enter)</span>
+      <div class="start-pins">
+        <div 
+          *ngFor="let p of getOffBoardPlayers()" 
+          class="board-pin" 
+          [ngClass]="p.color + '-pin'">
+        </div>
+      </div>
+    </div>
+
+    <div class="board-arena">
+      <div class="board-grid">
+        <ng-container *ngFor="let r of [0,1,2,3,4,5,6,7,8,9]">
+          <ng-container *ngFor="let c of [0,1,2,3,4,5,6,7,8,9]">
+            <div class="tile-cell">
+              <span class="tile-num">{{ getTileNumber(r, c) }}</span>
+              <span class="win-star-tag" *ngIf="getTileNumber(r, c) === 100">🏆 WIN</span>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <svg class="board-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <!-- Ladders -->
+        <g class="ladders-group" *ngFor="let l of ladderVisuals">
+          <line [attr.x1]="l.x1 - 1.8" [attr.y1]="l.y1" [attr.x2]="l.x2 - 1.8" [attr.y2]="l.y2" class="ladder-rail" />
+          <line [attr.x1]="l.x1 + 1.8" [attr.y1]="l.y1" [attr.x2]="l.x2 + 1.8" [attr.y2]="l.y2" class="ladder-rail" />
+          <line *ngFor="let r of l.rungs" [attr.x1]="r.x1" [attr.y1]="r.y1" [attr.x2]="r.x2" [attr.y2]="r.y2" class="ladder-rung" />
+        </g>
+
+        <!-- Snakes -->
+        <g class="snakes-group" *ngFor="let s of snakeVisuals">
+          <path 
+            [attr.d]="'M ' + s.x1 + ' ' + s.y1 + ' C ' + s.cx1 + ' ' + s.cy1 + ', ' + s.cx2 + ' ' + s.cy2 + ', ' + s.x2 + ' ' + s.y2" 
+            class="snake-shadow" />
+          <path 
+            [attr.d]="'M ' + s.x1 + ' ' + s.y1 + ' C ' + s.cx1 + ' ' + s.cy1 + ', ' + s.cx2 + ' ' + s.cy2 + ', ' + s.x2 + ' ' + s.y2" 
+            [attr.stroke]="s.color"
+            class="snake-body" />
+          <path 
+            [attr.d]="'M ' + s.x1 + ' ' + s.y1 + ' C ' + s.cx1 + ' ' + s.cy1 + ', ' + s.cx2 + ' ' + s.cy2 + ', ' + s.x2 + ' ' + s.y2" 
+            class="snake-stripe" />
+          <circle [attr.cx]="s.x1" [attr.cy]="s.y1" r="2.8" [attr.fill]="s.color" class="snake-head-circle" />
+          <circle [attr.cx]="s.x1 - 0.9" [attr.cy]="s.y1 - 0.7" r="0.75" fill="#ffffff" />
+          <circle [attr.cx]="s.x1 + 0.9" [attr.cy]="s.y1 - 0.7" r="0.75" fill="#ffffff" />
+          <circle [attr.cx]="s.x1 - 0.9" [attr.cy]="s.y1 - 0.7" r="0.4" fill="#000000" />
+          <circle [attr.cx]="s.x1 + 0.9" [attr.cy]="s.y1 - 0.7" r="0.4" fill="#000000" />
+        </g>
+      </svg>
+
+      <div class="tokens-overlay-grid">
+        <ng-container *ngFor="let r of [0,1,2,3,4,5,6,7,8,9]">
+          <ng-container *ngFor="let c of [0,1,2,3,4,5,6,7,8,9]">
+            <div class="tile-token-slot">
+              <div class="tile-pins-container" *ngIf="getPlayersAtTile(getTileNumber(r, c)).length > 0">
+                <div 
+                  *ngFor="let p of getPlayersAtTile(getTileNumber(r, c))" 
+                  class="board-pin"
+                  [class.pin-stacked]="getPlayersAtTile(getTileNumber(r, c)).length > 1"
+                  [ngClass]="p.color + '-pin'">
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Eliminated Modal -->
+  <div class="eliminated-overlay" *ngIf="isMeEliminated">
+    <div class="eliminated-card">
+      <span class="danger-icon">❌</span>
+      <h3>YOU ARE ELIMINATED</h3>
+      <p>You missed 3 consecutive turns. Other players are completing the match.</p>
+      <button class="btn-leave-dashboard" (click)="leaveRoomToDashboard()">
+        Leave to Dashboard
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #dicePips let-val="val">
+  <div class="pip-matrix pip-val-{{ val }}">
+    <span class="pip pip-1" *ngIf="val === 1 || val === 3 || val === 5"></span>
+    <span class="pip pip-tl" *ngIf="val >= 2"></span>
+    <span class="pip pip-br" *ngIf="val >= 2"></span>
+    <span class="pip pip-tr" *ngIf="val >= 4"></span>
+    <span class="pip pip-bl" *ngIf="val >= 4"></span>
+    <span class="pip pip-ml" *ngIf="val === 6"></span>
+    <span class="pip pip-mr" *ngIf="val === 6"></span>
+  </div>
+</ng-template>

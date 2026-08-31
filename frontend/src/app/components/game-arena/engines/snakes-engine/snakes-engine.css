@@ -1,0 +1,441 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.snakes-stage-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(circle at center, #1b63b8 0%, #0c366e 100%);
+  border-radius: 24px;
+  padding: 55px; /* Ensures docks sit outside board perimeter */
+  box-sizing: border-box;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 3-Dot Strike System */
+.strike-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.strike-dots .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.strike-dots .dot.missed {
+  background: #ef4444 !important;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+/* Player Docks */
+.player-dock {
+  position: absolute;
+  width: 90px;
+  min-height: 125px;
+  background: linear-gradient(180deg, #5dade2 0%, #2e86c1 100%);
+  border: 2.5px solid #f9e79f;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  pointer-events: none;
+}
+
+.player-dock.dock-active {
+  transform: scale(1.06);
+  box-shadow: 0 0 22px #facc15;
+  border-color: #ffffff;
+  pointer-events: auto;
+}
+
+.dock-eliminated {
+  opacity: 0.4;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.dock-winner {
+  border-color: #38bdf8;
+  box-shadow: 0 0 15px #38bdf8;
+}
+
+/* Placed safely outside the 100-tile grid */
+.dock-top-left { top: 12px; left: 12px; }
+.dock-top-right { top: 12px; right: 12px; }
+.dock-bottom-right { bottom: 12px; right: 12px; }
+.dock-bottom-left { bottom: 12px; left: 12px; }
+
+.dock-badge {
+  width: 100%;
+  padding: 4px 2px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.green-badge { background: #00a859; }
+.yellow-badge { background: #ffcc00; }
+.blue-badge { background: #0088ff; }
+.red-badge { background: #e60000; }
+
+.dock-user-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.dock-timer-pill {
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.5);
+  color: #facc15;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+
+.rank-badge {
+  font-size: 10px;
+  font-weight: 900;
+  color: #facc15;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.dock-dice-box {
+  width: 58px;
+  height: 58px;
+  background: #fdebd0;
+  border-radius: 8px;
+  border: 2px solid #edbb99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.eliminated-txt {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.finished-txt {
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   100-Tile Board Layout & Layer Hierarchy
+   ========================================================================== */
+.snakes-board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 520px;
+  max-height: 520px;
+  background: #5d4037;
+  border: 4px solid #3e2723;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.start-dock {
+  background: rgba(62, 39, 35, 0.95);
+  border-bottom: 2px solid #3e2723;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 60;
+}
+
+.start-label {
+  color: #ffecb3;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.start-pins {
+  display: flex;
+  gap: 6px;
+}
+
+.board-arena {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Layer 1: Background Tiles Grid */
+.board-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  z-index: 10;
+}
+
+.tile-cell {
+  border: 0.5px solid rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 3px;
+  position: relative;
+  background: #8b4513;
+  box-sizing: border-box;
+}
+
+.tile-cell:nth-child(even) {
+  background: #cd853f;
+}
+
+.tile-num {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff9c4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.win-star-tag {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 9px;
+  font-weight: 900;
+  color: #facc15;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+/* Layer 2: SVG Vector Snakes & Ladders Graphics */
+.board-svg-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.ladder-rail {
+  stroke: #eab308;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.8));
+}
+
+.ladder-rung {
+  stroke: #ca8a04;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.snake-shadow {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transform: translate(0.6%, 1%);
+}
+
+.snake-body {
+  fill: none;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.snake-stripe {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 0.9;
+  stroke-dasharray: 2, 2;
+  animation: snakeGlither 2.5s linear infinite;
+}
+
+.snake-head-circle {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+/* Layer 3: Top-Most Player Tokens Layer */
+.tokens-overlay-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  z-index: 50; /* Guarantees pins render above all snakes and ladders */
+  pointer-events: none;
+}
+
+.tile-token-slot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.tile-pins-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  pointer-events: auto;
+}
+
+.board-pin {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  flex-shrink: 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.board-pin.pin-stacked {
+  width: 14px;
+  height: 14px;
+  border-width: 1.5px;
+}
+
+.green-pin { background: radial-gradient(circle at 30% 30%, #82e0aa, #1e8449); }
+.yellow-pin { background: radial-gradient(circle at 30% 30%, #fde047, #ca8a04); }
+.blue-pin { background: radial-gradient(circle at 30% 30%, #60a5fa, #2563eb); }
+.red-pin { background: radial-gradient(circle at 30% 30%, #f87171, #dc2626); }
+
+/* Dice Face Pips */
+.dice-face {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pip-matrix {
+  position: relative;
+  width: 38px;
+  height: 38px;
+}
+
+.pip {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: #2c3e50;
+  border-radius: 50%;
+}
+
+.pip-1 { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.pip-tl { top: 4px; left: 4px; }
+.pip-br { bottom: 4px; right: 4px; }
+.pip-tr { top: 4px; right: 4px; }
+.pip-bl { bottom: 4px; left: 4px; }
+.pip-ml { top: 50%; left: 4px; transform: translateY(-50%); }
+.pip-mr { top: 50%; right: 4px; transform: translateY(-50%); }
+
+/* Eliminated Modal */
+.eliminated-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(5px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+}
+
+.eliminated-card {
+  background: #1e293b;
+  border: 2px solid #ef4444;
+  padding: 24px 32px;
+  border-radius: 16px;
+  text-align: center;
+  color: #fff;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.danger-icon {
+  font-size: 40px;
+  display: block;
+}
+
+.eliminated-card h3 {
+  color: #ef4444;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.eliminated-card p {
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 0;
+}
+
+.btn-leave-dashboard {
+  margin-top: 10px;
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: 800;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-leave-dashboard:hover {
+  background: #dc2626;
+}
+
+@keyframes snakeGlither {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 20; }
+}

@@ -1,0 +1,199 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-logo {
+  font-size: 24px;
+}
+
+.brand-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Role Badge */
+.role-badge {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* Wallet Badge */
+.wallet-badge {
+  background: #1e293b;
+  border: 1px solid #334155;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wallet-label {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.wallet-amount {
+  color: #10b981;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Action Buttons */
+.btn-nav {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-deposit {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.btn-deposit:hover {
+  background: #059669;
+}
+
+.btn-withdraw {
+  background: #1e293b;
+  border: 1px solid #3b82f6;
+  color: #38bdf8;
+}
+
+.btn-withdraw:hover {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.btn-admin {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-admin:hover {
+  background: #dc2626;
+}
+
+/* User Dropdown */
+.user-dropdown-container {
+  position: relative;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  padding: 7px 14px;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-btn:hover {
+  background: #334155;
+}
+
+.user-avatar {
+  font-size: 16px;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 210px;
+  background: #131b2e;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  padding: 6px 0;
+  z-index: 1001;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+.item-icon {
+  font-size: 16px;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #1e293b;
+  margin: 6px 0;
+}
+
+.text-danger {
+  color: #f87171;
+}
+
+.text-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}

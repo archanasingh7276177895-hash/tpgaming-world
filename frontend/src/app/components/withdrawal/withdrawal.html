@@ -1,0 +1,197 @@
+<div class="withdrawal-wrapper">
+  <!-- Header Bar -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goHome()">← Back to Dashboard</button>
+    <div class="balance-badge">
+      <span>Available Balance:</span>
+      <strong>₹{{ userBalance }}</strong>
+    </div>
+  </div>
+
+  <div class="withdrawal-grid">
+    <!-- Left Column: Form Card -->
+    <div class="card form-card">
+      <h2>Request Payout</h2>
+
+      <!-- Feedback Alerts -->
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        ⚠️ {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success">
+        ✅ {{ successMessage }}
+      </div>
+
+      <!-- Payout Method Tabs -->
+      <div class="method-selector">
+        <button 
+          type="button" 
+          class="method-tab" 
+          [class.active]="payoutMethod === 'UPI'" 
+          (click)="setPayoutMethod('UPI')">
+          ⚡ UPI Transfer
+        </button>
+        <button 
+          type="button" 
+          class="method-tab" 
+          [class.active]="payoutMethod === 'BANK'" 
+          (click)="setPayoutMethod('BANK')">
+          🏦 Bank Transfer
+        </button>
+      </div>
+
+      <form (ngSubmit)="onSubmitWithdrawal()">
+        <!-- Amount Selection -->
+        <div class="form-group">
+          <label>Withdrawal Amount (₹)</label>
+          <div class="input-with-max">
+            <input 
+              type="number" 
+              class="form-control" 
+              [(ngModel)]="amount" 
+              name="amount" 
+              placeholder="Enter amount (Min ₹10)" 
+              [disabled]="loading"
+              required 
+            />
+            <button type="button" class="btn-max" (click)="setMaxAmount()">Max</button>
+          </div>
+        </div>
+
+        <!-- Quick Amount Chips -->
+        <div class="amount-chips">
+          <button 
+            type="button" 
+            class="chip-btn" 
+            *ngFor="let val of quickAmounts" 
+            [class.selected]="amount === val"
+            (click)="setAmount(val)">
+            +₹{{ val }}
+          </button>
+        </div>
+
+        <!-- UPI Transfer Form -->
+        <div *ngIf="payoutMethod === 'UPI'" class="method-fields">
+          <div class="form-group">
+            <label>UPI ID (VPA)</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="upiId" 
+              name="upiId" 
+              placeholder="e.g. mobile@paytm or name@okaxis" 
+              [disabled]="loading"
+              required 
+            />
+          </div>
+        </div>
+
+        <!-- Bank Transfer Form -->
+        <div *ngIf="payoutMethod === 'BANK'" class="method-fields">
+          <div class="form-group">
+            <label>Account Holder Name</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="bankDetails.accountHolderName" 
+              name="accountHolderName" 
+              placeholder="Full name as per bank passbook" 
+              [disabled]="loading"
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Bank Account Number</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              [(ngModel)]="bankDetails.accountNumber" 
+              name="accountNumber" 
+              placeholder="Enter bank account number" 
+              [disabled]="loading"
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Confirm Account Number</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="bankDetails.confirmAccountNumber" 
+              name="confirmAccountNumber" 
+              placeholder="Re-enter bank account number" 
+              [disabled]="loading"
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Bank IFSC Code</label>
+            <input 
+              type="text" 
+              class="form-control text-uppercase" 
+              [(ngModel)]="bankDetails.ifsc" 
+              name="ifsc" 
+              placeholder="e.g. SBIN0001234" 
+              [disabled]="loading"
+              required 
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          {{ loading ? 'Submitting Request...' : 'Confirm & Request Payout' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Column: History Card -->
+    <div class="card history-card">
+      <div class="card-header">
+        <h3>Withdrawal History</h3>
+        <button class="btn-refresh" (click)="fetchWithdrawalHistory()" title="Refresh History">🔄</button>
+      </div>
+
+      <div *ngIf="historyLoading" class="loading-state">
+        <p>Loading transactions...</p>
+      </div>
+
+      <div *ngIf="!historyLoading && history.length === 0" class="empty-state">
+        <p>No withdrawal requests found.</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="!historyLoading && history.length > 0">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Destination</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of history">
+              <td>{{ item.createdAt | date:'shortDate' }}</td>
+              <td class="amount-col">₹{{ item.amount }}</td>
+              <td>
+                <span class="payout-type">{{ item.payoutMethod === 'BANK_TRANSFER' ? '🏦 Bank' : '⚡ UPI' }}</span>
+                <small class="payout-target" *ngIf="item.payoutMethod === 'UPI'">{{ item.upiId }}</small>
+                <small class="payout-target" *ngIf="item.payoutMethod === 'BANK_TRANSFER'">A/C: ••••{{ item.bankDetails?.accountNumber?.slice(-4) }}</small>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-' + item.status">
+                  {{ item.status | uppercase }}
+                </span>
+                <small class="admin-remark" *ngIf="item.adminRemark && item.status === 'rejected'">
+                  {{ item.adminRemark }}
+                </small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

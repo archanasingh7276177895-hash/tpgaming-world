@@ -1,0 +1,49 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>🎮 TP Gaming World</h2>
+      <p>{{ isLoginMode ? 'Sign in to start playing' : 'Create an account to join' }}</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <!-- Registration Only Field -->
+      <div class="form-group" *ngIf="!isLoginMode">
+        <label>Username</label>
+        <input type="text" class="form-control" [(ngModel)]="username" name="username" placeholder="Choose a username" required />
+      </div>
+
+      <!-- User ID Field (Used for both Login & Register) -->
+      <div class="form-group">
+        <label>{{ isLoginMode ? 'User ID' : 'Mobile Number / Email' }}</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="userId" 
+          name="userId" 
+          [placeholder]="isLoginMode ? 'Enter your User ID' : 'Enter mobile or email'" 
+          required />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" [(ngModel)]="password" name="password" placeholder="Enter password" required />
+      </div>
+
+      <div class="form-error" *ngIf="errorMessage">
+        ⚠️ {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary w-100" [disabled]="loading">
+        {{ loading ? 'Processing...' : (isLoginMode ? 'Login' : 'Register') }}
+      </button>
+    </form>
+
+    <div class="auth-toggle">
+      <p>
+        {{ isLoginMode ? "Don't have an account?" : "Already have an account?" }}
+        <span (click)="toggleMode()">{{ isLoginMode ? 'Register Now' : 'Login Here' }}</span>
+      </p>
+    </div>
+  </div>
+</div>

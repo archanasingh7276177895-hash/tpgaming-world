@@ -1,0 +1,73 @@
+<div class="history-container">
+  
+  <!-- Header Bar -->
+  <div class="history-header">
+    <button class="btn-back" (click)="backToDashboard()">← Back</button>
+    <h2>📜 Game History & Matches</h2>
+    <div class="stats-counter" *ngIf="!isLoading">
+      Total Matches: <strong>{{ history.length }}</strong>
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div class="filter-bar">
+    <button class="filter-pill" [class.active]="filter === 'ALL'" (click)="filter = 'ALL'">All</button>
+    <button class="filter-pill" [class.active]="filter === 'WON'" (click)="filter = 'WON'">Wins 👑</button>
+    <button class="filter-pill" [class.active]="filter === 'LOST'" (click)="filter = 'LOST'">Losses 💔</button>
+  </div>
+
+  <!-- Error Display -->
+  <div class="error-banner" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div class="loader-box" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading your match records...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredHistory.length === 0">
+    <div class="empty-icon">🎮</div>
+    <h3>No Matches Found</h3>
+    <p>You haven't played any matches in this category yet.</p>
+  </div>
+
+  <!-- History List -->
+  <div class="history-list" *ngIf="!isLoading && filteredHistory.length > 0">
+    <div class="history-card" *ngFor="let item of filteredHistory" [ngClass]="item.status.toLowerCase() + '-border'">
+      
+      <div class="card-left">
+        <span class="game-emoji">{{ getGameIcon(item.gameType) }}</span>
+        <div class="match-info">
+          <h4>{{ item.gameType | uppercase }}</h4>
+          <span class="room-tag">Room #{{ item.roomId.slice(-6) }}</span>
+          <span class="date-tag">{{ item.date | date:'medium' }}</span>
+        </div>
+      </div>
+
+      <div class="card-middle">
+        <div class="fee-col">
+          <span class="lbl">Entry Fee</span>
+          <span class="val fee-val">₹{{ item.entryFee }}</span>
+        </div>
+        <div class="fee-col">
+          <span class="lbl">Winnings</span>
+          <span class="val win-val">₹{{ item.winnings }}</span>
+        </div>
+      </div>
+
+      <div class="card-right">
+        <span class="status-badge" [ngClass]="'badge-' + item.status.toLowerCase()">
+          {{ item.status }}
+        </span>
+        <span class="net-profit" [class.profit-positive]="getNetProfit(item) > 0" [class.profit-negative]="getNetProfit(item) < 0">
+          {{ getNetProfit(item) > 0 ? '+' : '' }}₹{{ getNetProfit(item) }}
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+</div>

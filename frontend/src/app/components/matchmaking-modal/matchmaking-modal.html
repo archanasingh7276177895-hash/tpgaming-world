@@ -1,0 +1,39 @@
+<div class="matchmaking-overlay">
+  <div class="matchmaking-card">
+    <div class="radar-wrapper" *ngIf="!matchedRoom">
+      <div class="radar-circle"></div>
+      <div class="radar-pulse"></div>
+      <span class="game-icon">🎮</span>
+    </div>
+
+    <div class="match-found-icon" *ngIf="matchedRoom">
+      ⚔️
+    </div>
+
+    <h2>{{ matchedRoom ? 'Opponents Found!' : 'Searching for Match' }}</h2>
+    <p class="status-subtitle">{{ searchStatus }}</p>
+
+    <!-- Match Config Badge -->
+    <div class="config-badges" *ngIf="gameConfig">
+      <span class="badge badge-game">{{ gameConfig.gameType | uppercase }}</span>
+      <span class="badge badge-mode">{{ gameConfig.playerMode }} PLAYERS</span>
+      <span class="badge badge-fee">₹{{ gameConfig.entryFee }} ENTRY</span>
+    </div>
+
+    <!-- Opponent Cards when Matched -->
+    <div class="matched-players" *ngIf="matchedRoom">
+      <div class="player-pill" *ngFor="let p of matchedRoom.players">
+        <span class="avatar">👤</span>
+        <span class="name">{{ p.username }}</span>
+      </div>
+      <div class="prize-tag">
+        🏆 Prize Pool: <strong>₹{{ matchedRoom.prizePool }}</strong>
+      </div>
+      <p class="countdown-text">Starting in {{ countdown }}s...</p>
+    </div>
+
+    <button class="btn-cancel" *ngIf="!matchedRoom" (click)="onCancel()">
+      Cancel Search
+    </button>
+  </div>
+</div>

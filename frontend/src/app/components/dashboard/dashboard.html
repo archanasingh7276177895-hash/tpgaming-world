@@ -1,0 +1,141 @@
+<div class="dashboard-container">
+  <div class="welcome-banner">
+    <h2>Welcome Back, {{ username }}! 👋</h2>
+    <p *ngIf="userRole === 'admin'">
+      🛡️ <strong>Admin Account:</strong> All matches launch in offline Practice Mode against Computer AI.
+    </p>
+    <p *ngIf="userRole !== 'admin'">
+      Select your player mode, entry fee tier, and launch into match matchmaking.
+    </p>
+  </div>
+
+  <div class="games-grid">
+    <!-- Game 1: Classic Ludo -->
+    <div class="game-card">
+      <div class="game-icon">🎲</div>
+      <h3>Classic Ludo</h3>
+
+      <!-- Play Mode Selector (Live vs Bot) -->
+      <div class="selector-group" *ngIf="userRole !== 'admin'">
+        <label>Opponent Type:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="matchType['ludo'] === 'live'" (click)="selectMatchType('ludo', 'live')">👥 Live Players</button>
+          <button class="toggle-btn" [class.active]="matchType['ludo'] === 'bot'" (click)="selectMatchType('ludo', 'bot')">🤖 vs Computer</button>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <label>Player Count:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="gameModes['ludo'] === '2P'" (click)="selectMode('ludo', '2P')">2 Players</button>
+          <button class="toggle-btn" [class.active]="gameModes['ludo'] === '4P'" (click)="selectMode('ludo', '4P')">4 Players</button>
+        </div>
+      </div>
+
+      <div class="selector-group" *ngIf="userRole !== 'admin' && matchType['ludo'] !== 'bot'">
+        <label>Select Entry Fee:</label>
+        <div class="tier-buttons">
+          <button *ngFor="let fee of boardEntryFees" class="tier-btn" [class.active]="selectedFees['ludo'] === fee" (click)="selectFee('ludo', fee)">
+            ₹{{ fee }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-play" (click)="startGame('ludo')">
+        {{ (userRole === 'admin' || matchType['ludo'] === 'bot') ? 'Play vs Computer (Free)' : ('Play ' + gameModes['ludo'] + ' Match (₹' + selectedFees['ludo'] + ')') }}
+      </button>
+    </div>
+
+    <!-- Game 2: Snakes & Ladders -->
+    <div class="game-card">
+      <div class="game-icon">🐍</div>
+      <h3>Snakes & Ladders</h3>
+
+      <!-- Play Mode Selector (Live vs Bot) -->
+      <div class="selector-group" *ngIf="userRole !== 'admin'">
+        <label>Opponent Type:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="matchType['snakes'] === 'live'" (click)="selectMatchType('snakes', 'live')">👥 Live Players</button>
+          <button class="toggle-btn" [class.active]="matchType['snakes'] === 'bot'" (click)="selectMatchType('snakes', 'bot')">🤖 vs Computer</button>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <label>Player Count:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="gameModes['snakes'] === '2P'" (click)="selectMode('snakes', '2P')">2 Players</button>
+          <button class="toggle-btn" [class.active]="gameModes['snakes'] === '4P'" (click)="selectMode('snakes', '4P')">4 Players</button>
+        </div>
+      </div>
+
+      <div class="selector-group" *ngIf="userRole !== 'admin' && matchType['snakes'] !== 'bot'">
+        <label>Select Entry Fee:</label>
+        <div class="tier-buttons">
+          <button *ngFor="let fee of boardEntryFees" class="tier-btn" [class.active]="selectedFees['snakes'] === fee" (click)="selectFee('snakes', fee)">
+            ₹{{ fee }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-play" (click)="startGame('snakes')">
+        {{ (userRole === 'admin' || matchType['snakes'] === 'bot') ? 'Play vs Computer (Free)' : ('Play ' + gameModes['snakes'] + ' Match (₹' + selectedFees['snakes'] + ')') }}
+      </button>
+    </div>
+
+    <!-- Game 3: Chess -->
+    <div class="game-card">
+      <div class="game-icon">♟️</div>
+      <h3>Chess Arena</h3>
+
+      <!-- Play Mode Selector (Live vs Bot) -->
+      <div class="selector-group" *ngIf="userRole !== 'admin'">
+        <label>Opponent Type:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="matchType['chess'] === 'live'" (click)="selectMatchType('chess', 'live')">👥 Live Players</button>
+          <button class="toggle-btn" [class.active]="matchType['chess'] === 'bot'" (click)="selectMatchType('chess', 'bot')">🤖 vs Computer</button>
+        </div>
+      </div>
+
+      <div class="selector-group" *ngIf="userRole !== 'admin' && matchType['chess'] !== 'bot'">
+        <label>Select Entry Fee:</label>
+        <div class="tier-buttons">
+          <button *ngFor="let fee of chessEntryFees" class="tier-btn" [class.active]="selectedFees['chess'] === fee" (click)="selectFee('chess', fee)">
+            ₹{{ fee }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-play" (click)="startGame('chess')">
+        {{ (userRole === 'admin' || matchType['chess'] === 'bot') ? 'Play vs Computer (Free)' : ('Play 2P Match (₹' + selectedFees['chess'] + ')') }}
+      </button>
+    </div>
+
+    <!-- Game 4: Fruit Ninja -->
+    <div class="game-card">
+      <div class="game-icon">🍉</div>
+      <h3>Fruit Ninja</h3>
+
+      <!-- Play Mode Selector (Live vs Bot) -->
+      <div class="selector-group" *ngIf="userRole !== 'admin'">
+        <label>Opponent Type:</label>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" [class.active]="matchType['fruit'] === 'live'" (click)="selectMatchType('fruit', 'live')">👥 Live Players</button>
+          <button class="toggle-btn" [class.active]="matchType['fruit'] === 'bot'" (click)="selectMatchType('fruit', 'bot')">🤖 vs Computer</button>
+        </div>
+      </div>
+
+      <div class="selector-group" *ngIf="userRole !== 'admin' && matchType['fruit'] !== 'bot'">
+        <label>Select Entry Fee:</label>
+        <div class="tier-buttons">
+          <button *ngFor="let fee of fruitEntryFees" class="tier-btn" [class.active]="selectedFees['fruit'] === fee" (click)="selectFee('fruit', fee)">
+            ₹{{ fee }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-play" (click)="startGame('fruit')">
+        {{ (userRole === 'admin' || matchType['fruit'] === 'bot') ? 'Play vs Computer (Free)' : ('Play 2P Match (₹' + selectedFees['fruit'] + ')') }}
+      </button>
+    </div>
+  </div>
+</div>

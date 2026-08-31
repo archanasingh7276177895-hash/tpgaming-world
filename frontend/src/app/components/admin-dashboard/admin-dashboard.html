@@ -1,0 +1,271 @@
+<div class="admin-container">
+  <!-- Top Bar -->
+  <div class="header-row">
+    <div>
+      <h2>🛡️ Admin Control Panel</h2>
+      <p class="subtitle">Platform monitoring and player balance controls</p>
+    </div>
+    <div class="control-actions">
+      <div class="search-box">
+        <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search username, UTR, UPI, A/C..." />
+      </div>
+      <select class="sort-select" [(ngModel)]="sortBy" *ngIf="activeSection !== 'users'">
+        <option value="date_desc">📅 Newest First</option>
+        <option value="date_asc">📅 Oldest First</option>
+        <option value="amount_desc">💰 Highest Amount</option>
+        <option value="amount_asc">💰 Lowest Amount</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Analytics & Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card" (click)="activeSection = 'users'">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <h3>Total Registered Players</h3>
+        <p>{{ stats.totalUsers }}</p>
+      </div>
+    </div>
+    <div class="stat-card" (click)="activeSection = 'deposits'; setDepositFilter('pending')">
+      <div class="stat-icon pending">📥</div>
+      <div class="stat-info">
+        <h3>Pending Deposits</h3>
+        <p class="text-warning">{{ stats.pendingDeposits }}</p>
+      </div>
+    </div>
+    <div class="stat-card" (click)="activeSection = 'withdrawals'; setWithdrawalFilter('pending')">
+      <div class="stat-icon warning">📤</div>
+      <div class="stat-info">
+        <h3>Pending Withdrawals</h3>
+        <p class="text-danger">{{ stats.pendingWithdrawals }}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon success">💰</div>
+      <div class="stat-info">
+        <h3>Platform Liquidity</h3>
+        <p class="text-green">₹{{ stats.totalPlatformBalance }}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon volume">📊</div>
+      <div class="stat-info">
+        <h3>Today's Volume</h3>
+        <p class="text-blue">₹{{ stats.todayVolume }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Section Tabs -->
+  <div class="nav-tabs">
+    <button class="nav-tab" [class.active]="activeSection === 'deposits'" (click)="activeSection = 'deposits'; currentPage = 1">
+      📥 Deposits ({{ filteredDeposits.length }})
+    </button>
+    <button class="nav-tab" [class.active]="activeSection === 'withdrawals'" (click)="activeSection = 'withdrawals'; currentPage = 1">
+      📤 Withdrawals ({{ filteredWithdrawals.length }})
+    </button>
+    <button class="nav-tab" [class.active]="activeSection === 'users'" (click)="activeSection = 'users'; currentPage = 1">
+      👥 Player Accounts ({{ filteredUsers.length }})
+    </button>
+  </div>
+
+  <!-- ================= DEPOSITS SECTION ================= -->
+  <div class="table-card" *ngIf="activeSection === 'deposits'">
+    <div class="filter-bar">
+      <button [class.active]="depositFilter === 'pending'" (click)="setDepositFilter('pending')">Pending</button>
+      <button [class.active]="depositFilter === 'approved'" (click)="setDepositFilter('approved')">Approved</button>
+      <button [class.active]="depositFilter === 'rejected'" (click)="setDepositFilter('rejected')">Rejected</button>
+      <button [class.active]="depositFilter === 'all'" (click)="setDepositFilter('all')">All Records</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Amount</th>
+            <th>UTR Ref</th>
+            <th>Receipt</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="paginatedDeposits.length === 0">
+            <td colspan="7" class="text-center empty-row">No deposit records match your criteria.</td>
+          </tr>
+          <tr *ngFor="let d of paginatedDeposits">
+            <td><strong>{{ d.username || d.userId }}</strong></td>
+            <td class="text-green font-bold">₹{{ d.amount }}</td>
+            <td><code>{{ d.utrNumber || d.utr }}</code></td>
+            <td>
+              <button *ngIf="d.screenshotUrl || d.screenshot" class="btn-preview" (click)="openImageModal(d.screenshotUrl || d.screenshot)">
+                🖼️ View Proof
+              </button>
+              <span *ngIf="!d.screenshotUrl && !d.screenshot" class="text-muted">None</span>
+            </td>
+            <td>{{ d.createdAt | date:'mediumDate' }} <br><small class="text-muted">{{ d.createdAt | date:'shortTime' }}</small></td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + d.status">{{ d.status | uppercase }}</span>
+              <small class="admin-remark" *ngIf="d.adminRemark">{{ d.adminRemark }}</small>
+            </td>
+            <td>
+              <div class="action-btns" *ngIf="d.status === 'pending'">
+                <button class="btn-approve" (click)="approveDeposit(d._id)">Approve</button>
+                <button class="btn-reject" (click)="rejectDeposit(d._id)">Reject</button>
+              </div>
+              <span *ngIf="d.status !== 'pending'" class="text-muted">Processed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-footer" *ngIf="filteredDeposits.length > pageSize">
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <div class="pagination-btns">
+        <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= WITHDRAWALS SECTION ================= -->
+  <div class="table-card" *ngIf="activeSection === 'withdrawals'">
+    <div class="filter-bar">
+      <button [class.active]="withdrawalFilter === 'pending'" (click)="setWithdrawalFilter('pending')">Pending</button>
+      <button [class.active]="withdrawalFilter === 'approved'" (click)="setWithdrawalFilter('approved')">Approved</button>
+      <button [class.active]="withdrawalFilter === 'rejected'" (click)="setWithdrawalFilter('rejected')">Rejected</button>
+      <button [class.active]="withdrawalFilter === 'all'" (click)="setWithdrawalFilter('all')">All Records</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Payout Destination</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="paginatedWithdrawals.length === 0">
+            <td colspan="7" class="text-center empty-row">No withdrawal records match your criteria.</td>
+          </tr>
+          <tr *ngFor="let w of paginatedWithdrawals">
+            <td><strong>{{ w.username }}</strong></td>
+            <td class="text-green font-bold">₹{{ w.amount }}</td>
+            <td>
+              <span class="badge badge-info">{{ w.payoutMethod === 'BANK_TRANSFER' ? '🏦 Bank' : '⚡ UPI' }}</span>
+            </td>
+            <td>
+              <div *ngIf="w.payoutMethod === 'UPI'">
+                <strong>UPI:</strong> <code>{{ w.upiId }}</code>
+              </div>
+              <div *ngIf="w.payoutMethod === 'BANK_TRANSFER'" class="bank-info-box">
+                <div><strong>A/C:</strong> {{ w.bankDetails?.accountHolderName }}</div>
+                <div><code>{{ w.bankDetails?.accountNumber }}</code></div>
+                <div><strong>IFSC:</strong> {{ w.bankDetails?.ifsc }}</div>
+              </div>
+            </td>
+            <td>{{ w.createdAt | date:'mediumDate' }} <br><small class="text-muted">{{ w.createdAt | date:'shortTime' }}</small></td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + w.status">{{ w.status | uppercase }}</span>
+              <small *ngIf="w.payoutRef" class="d-block text-muted">Ref: {{ w.payoutRef }}</small>
+              <small *ngIf="w.adminRemark" class="admin-remark">{{ w.adminRemark }}</small>
+            </td>
+            <td>
+              <div class="action-btns" *ngIf="w.status === 'pending'">
+                <button class="btn-approve" (click)="approveWithdrawal(w._id)">Approve & Pay</button>
+                <button class="btn-reject" (click)="rejectWithdrawal(w._id)">Reject & Refund</button>
+              </div>
+              <span *ngIf="w.status !== 'pending'" class="text-muted">Processed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-footer" *ngIf="filteredWithdrawals.length > pageSize">
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <div class="pagination-btns">
+        <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PLAYERS LIST SECTION ================= -->
+  <div class="table-card" *ngIf="activeSection === 'users'">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Player Name</th>
+            <th>Phone / User ID</th>
+            <th>Role</th>
+            <th>Wallet Balance</th>
+            <th>Status</th>
+            <th>Registered Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="paginatedUsers.length === 0">
+            <td colspan="7" class="text-center empty-row">No players found.</td>
+          </tr>
+          <tr *ngFor="let u of paginatedUsers">
+            <td><strong>{{ u.username }}</strong></td>
+            <td>{{ u.mobileNumber || u.userId || 'N/A' }}</td>
+            <td><span class="badge" [class.badge-approved]="u.role === 'admin'">{{ u.role || 'user' }}</span></td>
+            <td class="text-green font-bold">₹{{ u.balance || u.walletBalance || 0 }}</td>
+            <td>
+              <span class="badge" [class.badge-rejected]="u.isBlocked" [class.badge-approved]="!u.isBlocked">
+                {{ u.isBlocked ? 'Blocked' : 'Active' }}
+              </span>
+            </td>
+            <td>{{ u.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-edit" (click)="adjustBalance(u._id, u.username)">⚡ Adjust Balance</button>
+                <button 
+                  *ngIf="u.role !== 'admin'"
+                  class="btn-toggle" 
+                  [class.btn-unblock]="u.isBlocked"
+                  [class.btn-block]="!u.isBlocked"
+                  (click)="toggleBlockUser(u._id, u.username)">
+                  {{ u.isBlocked ? 'Unblock' : 'Block' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-footer" *ngIf="filteredUsers.length > pageSize">
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <div class="pagination-btns">
+        <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div class="image-modal-overlay" *ngIf="previewImageUrl" (click)="closeImageModal()">
+    <div class="image-modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeImageModal()">✕</button>
+      <img [src]="previewImageUrl" alt="Receipt Screenshot" />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="arena-container">
+  <div class="arena-header">
+    <div class="match-meta">
+      <span class="game-tag">🎮 {{ room?.gameType | uppercase }} ARENA</span>
+      <span class="room-id">Room: #{{ room?.roomId?.slice(-6) }}</span>
+    </div>
+
+    <!-- Live Match Prize Badge -->
+    <div class="prize-pill" *ngIf="!room?.isBotMatch">
+      <span class="trophy">🏆</span>
+      <span class="amount">₹{{ room?.prizePool }}</span>
+      <span class="label">Prize Pool</span>
+    </div>
+
+    <!-- Practice / Bot Badge -->
+    <div class="prize-pill bot-mode-pill" *ngIf="room?.isBotMatch">
+      <span class="trophy">🤖</span>
+      <span class="amount">PRACTICE</span>
+      <span class="label">vs Computer (No Real Money)</span>
+    </div>
+
+    <button class="btn-forfeit" (click)="forfeitMatch()" *ngIf="!isGameOver">
+      {{ room?.isBotMatch ? 'Exit Game' : 'Forfeit Match' }}
+    </button>
+  </div>
+
+  <div class="engine-container">
+    <app-fruit-engine 
+      *ngIf="room?.gameType === 'fruit'"
+      [room]="room" 
+      [currentUser]="currentUser"
+      (finishMatch)="room?.isBotMatch ? handleBotMatchFinish($event) : onFinish()">
+    </app-fruit-engine>
+
+    <app-ludo-engine
+      *ngIf="room?.gameType === 'ludo'"
+      [room]="room" 
+      [currentUser]="currentUser"
+      (finishMatch)="room?.isBotMatch ? handleBotMatchFinish($event) : onFinish()">
+    </app-ludo-engine>
+
+    <app-snakes-engine
+      *ngIf="room?.gameType === 'snakes'"
+      [room]="room" 
+      [currentUser]="currentUser"
+      (finishMatch)="room?.isBotMatch ? handleBotMatchFinish($event) : onFinish()">
+    </app-snakes-engine>
+
+    <app-chess-engine
+      *ngIf="room?.gameType === 'chess'"
+      [room]="room" 
+      [currentUser]="currentUser"
+      (finishMatch)="room?.isBotMatch ? handleBotMatchFinish($event) : onFinish()">
+    </app-chess-engine>
+  </div>
+
+  <div class="victory-overlay" *ngIf="isGameOver && winnerData">
+    <div class="victory-card" [class.win-card]="winnerData.isMe" [class.lose-card]="!winnerData.isMe">
+      <div class="victory-icon">{{ winnerData.isMe ? '👑' : '💔' }}</div>
+      
+      <h2>{{ winnerData.isMe ? 'VICTORY ACHIEVED' : 'MATCH LOST' }}</h2>
+      
+      <p class="winner-subtitle">
+        <strong>{{ winnerData.username }}</strong> won the match!
+      </p>
+
+      <div class="reward-box" *ngIf="winnerData.isMe && !room?.isBotMatch">
+        <span class="reward-label">Prize Credited to Wallet</span>
+        <span class="reward-val">+ ₹{{ winnerData.prize }}</span>
+      </div>
+
+      <div class="reward-box" *ngIf="room?.isBotMatch">
+        <span class="reward-label">Practice Result</span>
+        <span class="reward-val">{{ winnerData.isMe ? 'Practice Won!' : 'Practice Match Ended' }}</span>
+      </div>
+
+      <button class="btn-dashboard" (click)="onFinish()">Back to Dashboard</button>
+    </div>
+  </div>
+</div>

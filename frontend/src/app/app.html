@@ -1,0 +1,72 @@
+<!-- Top Navigation Bar -->
+<app-navbar
+  [isLoggedIn]="isLoggedIn"
+  [walletBalance]="userBalance"
+  [userId]="username"
+  [userRole]="userRole"
+  (navigate)="onNavigate($event)"
+  (logout)="onLogout()">
+</app-navbar>
+
+<!-- Auth Overlay / Login View if Not Logged In -->
+<div *ngIf="!isLoggedIn">
+  <app-auth (loginSuccess)="onLoginSuccess()"></app-auth>
+</div>
+
+<!-- Main Views when Logged In -->
+<main *ngIf="isLoggedIn" class="app-main-content">
+  
+  <!-- Dashboard View -->
+  <app-dashboard 
+    *ngIf="currentPage === 'dashboard'"
+    [username]="username"
+    [userRole]="userRole"
+    (launchGame)="onLaunchGame($event)">
+  </app-dashboard>
+
+  <!-- Game History View -->
+  <app-game-history 
+    *ngIf="currentPage === 'game-history'">
+  </app-game-history>
+
+  <!-- Transactions View -->
+  <app-transactions 
+    *ngIf="currentPage === 'transactions'">
+  </app-transactions>
+
+  <!-- Deposit View -->
+  <app-deposit 
+    *ngIf="currentPage === 'deposit'">
+  </app-deposit>
+
+  <!-- Withdrawal View -->
+  <app-withdrawal 
+    *ngIf="currentPage === 'withdrawal'">
+  </app-withdrawal>
+
+  <!-- Admin View -->
+  <app-admin-dashboard 
+    *ngIf="currentPage === 'admin' && userRole === 'admin'">
+  </app-admin-dashboard>
+
+  <!-- Change Password View -->
+  <app-change-password 
+    *ngIf="currentPage === 'change-password'">
+  </app-change-password>
+
+  <!-- Active Game Arena View -->
+  <app-game-arena 
+    *ngIf="currentPage === 'game' && activeMatchRoom" 
+    [room]="activeMatchRoom"
+    [currentUser]="currentUser"
+    (exitGame)="onExitGame()">
+  </app-game-arena>
+
+</main>
+
+<!-- Matchmaking Modal -->
+<app-matchmaking-modal
+  *ngIf="activeMatchmakingConfig"
+  (matchReady)="onMatchReady($event)"
+  (cancelMatchmaking)="activeMatchmakingConfig = null">
+</app-matchmaking-modal>

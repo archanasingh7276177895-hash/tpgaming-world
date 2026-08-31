@@ -1,0 +1,68 @@
+<nav class="navbar">
+  <div class="nav-brand" (click)="onNavigate('dashboard')">
+    <span class="brand-logo">🎮</span>
+    <span class="brand-title">TP Gaming World</span>
+  </div>
+
+  <div class="nav-actions" *ngIf="isLoggedIn">
+    <!-- Admin Indicator Badge (Admin Only) -->
+    <span class="role-badge" *ngIf="userRole === 'admin'">🛡️ Admin Mode</span>
+
+    <!-- Wallet Balance & Action Buttons (Client Only) -->
+    <ng-container *ngIf="userRole !== 'admin'">
+      <div class="wallet-badge">
+        <span class="wallet-label">Wallet</span>
+        <span class="wallet-amount">₹{{ walletBalance }}</span>
+      </div>
+
+      <button class="btn-nav btn-deposit" (click)="onNavigate('deposit')">
+        ➕ Deposit
+      </button>
+
+      <button class="btn-nav btn-withdraw" (click)="onNavigate('withdrawal')">
+        💳 Withdraw
+      </button>
+    </ng-container>
+
+    <!-- Admin Panel Button (Admin Only) -->
+    <button class="btn-nav btn-admin" *ngIf="userRole === 'admin'" (click)="onNavigate('admin')">
+      🛡️ Admin Panel
+    </button>
+
+    <!-- User Profile Dropdown (Both Admin & Client) -->
+    <div class="user-dropdown-container">
+      <button class="user-btn" (click)="toggleDropdown($event)">
+        <span class="user-avatar">👤</span>
+        <span class="user-name">{{ userId || 'Account' }}</span>
+        <span class="dropdown-arrow" [class.open]="isDropdownOpen">▼</span>
+      </button>
+
+      <div class="dropdown-menu" *ngIf="isDropdownOpen">
+        <!-- Client-Specific Menu Items -->
+        <ng-container *ngIf="userRole !== 'admin'">
+          <div class="dropdown-item" (click)="onNavigate('game-history')">
+            <span class="item-icon">🎮</span> Game History
+          </div>
+          <div class="dropdown-item" (click)="onNavigate('transactions')">
+            <span class="item-icon">📜</span> Transaction History
+          </div>
+        </ng-container>
+
+        <!-- Admin Shortcut in Dropdown -->
+        <div class="dropdown-item" *ngIf="userRole === 'admin'" (click)="onNavigate('admin')">
+          <span class="item-icon">🛡️</span> Admin Dashboard
+        </div>
+
+        <div class="dropdown-item" (click)="onNavigate('change-password')">
+          <span class="item-icon">🔑</span> Change Password
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <div class="dropdown-item text-danger" (click)="onLogout()">
+          <span class="item-icon">🚪</span> Logout
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

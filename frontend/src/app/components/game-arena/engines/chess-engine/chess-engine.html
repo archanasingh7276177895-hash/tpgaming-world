@@ -1,0 +1,57 @@
+<div class="chess-stage-wrapper">
+  
+  <!-- Opponent Dock (Top) -->
+  <div class="player-header-bar" [class.turn-active]="chess.turn() !== myColor">
+    <div class="player-info">
+      <span class="piece-indicator">{{ myColor === 'w' ? '♚' : '♔' }}</span>
+      <span class="name">{{ myColor === 'w' ? blackPlayer.username : whitePlayer.username }}</span>
+    </div>
+    <div class="clock-pill">
+      ⏱️ {{ formatTime(myColor === 'w' ? blackPlayer.timer : whitePlayer.timer) }}
+    </div>
+  </div>
+
+  <!-- 8x8 Chessboard Container -->
+  <div class="chess-board">
+    <div class="chess-row" *ngFor="let row of boardGrid">
+      <div 
+        class="chess-square" 
+        *ngFor="let sq of row"
+        [class.light-sq]="sq.isLight"
+        [class.dark-sq]="!sq.isLight"
+        [class.selected-sq]="selectedSquare === sq.square"
+        [class.last-move-sq]="lastMove?.from === sq.square || lastMove?.to === sq.square"
+        [class.in-check-sq]="chess.inCheck() && sq.piece?.type === 'k' && sq.piece?.color === chess.turn()"
+        (click)="onSquareClick(sq)">
+
+        <!-- Legal Destination Move Marker -->
+        <span class="move-dot" *ngIf="validMoves.includes(sq.square) && !sq.piece"></span>
+        <span class="capture-ring" *ngIf="validMoves.includes(sq.square) && sq.piece"></span>
+
+        <!-- Piece Glyph -->
+        <span 
+          class="chess-piece" 
+          [class.piece-white]="sq.piece?.color === 'w'"
+          [class.piece-black]="sq.piece?.color === 'b'">
+          {{ getPieceGlyph(sq.piece) }}
+        </span>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Self Dock (Bottom) -->
+  <div class="player-footer-bar" [class.turn-active]="chess.turn() === myColor">
+    <div class="player-info">
+      <span class="piece-indicator">{{ myColor === 'w' ? '♔' : '♚' }}</span>
+      <span class="name">{{ myColor === 'w' ? whitePlayer.username : blackPlayer.username }} (You)</span>
+    </div>
+    <div class="actions-group">
+      <div class="clock-pill">
+        ⏱️ {{ formatTime(myColor === 'w' ? whitePlayer.timer : blackPlayer.timer) }}
+      </div>
+      <button class="btn-resign" (click)="resignGame()">Resign</button>
+    </div>
+  </div>
+
+</div>

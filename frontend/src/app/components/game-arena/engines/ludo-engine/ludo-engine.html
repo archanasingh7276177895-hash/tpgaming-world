@@ -1,0 +1,264 @@
+<div class="ludo-stage-wrapper">
+  
+  <!-- Player Dice Docks -->
+  <div 
+    class="player-dock dock-top-left" 
+    *ngIf="players[0]?.isActive"
+    [class.dock-active]="currentTurnIndex === 0"
+    [class.dock-eliminated]="players[0]?.isEliminated"
+    [class.dock-winner]="players[0]?.isFinished"
+    (click)="rollDice(0)">
+    <div class="dock-badge green-badge">
+      <span class="dock-user-label">{{ players[0].username }}</span>
+      <div class="strike-dots" *ngIf="!players[0]?.isFinished">
+        <span class="dot" [class.missed]="players[0].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[0].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[0].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 0 && !players[0]?.isEliminated && !players[0]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[0]?.isFinished">Rank #{{ players[0]?.rank || 1 }} 👑</span>
+    </div>
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 0 && !players[0]?.isEliminated && !players[0]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[0]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[0]?.isFinished" class="finished-txt">DONE</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-top-right" 
+    *ngIf="players[1]?.isActive"
+    [class.dock-active]="currentTurnIndex === 1"
+    [class.dock-eliminated]="players[1]?.isEliminated"
+    [class.dock-winner]="players[1]?.isFinished"
+    (click)="rollDice(1)">
+    <div class="dock-badge yellow-badge">
+      <span class="dock-user-label">{{ players[1].username }}</span>
+      <div class="strike-dots" *ngIf="!players[1]?.isFinished">
+        <span class="dot" [class.missed]="players[1].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[1].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[1].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 1 && !players[1]?.isEliminated && !players[1]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[1]?.isFinished">Rank #{{ players[1]?.rank || 1 }} 👑</span>
+    </div>
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 1 && !players[1]?.isEliminated && !players[1]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[1]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[1]?.isFinished" class="finished-txt">DONE</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-bottom-right" 
+    *ngIf="players[2]?.isActive"
+    [class.dock-active]="currentTurnIndex === 2"
+    [class.dock-eliminated]="players[2]?.isEliminated"
+    [class.dock-winner]="players[2]?.isFinished"
+    (click)="rollDice(2)">
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 2 && !players[2]?.isEliminated && !players[2]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[2]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[2]?.isFinished" class="finished-txt">DONE</span>
+    </div>
+    <div class="dock-badge blue-badge">
+      <span class="dock-user-label">{{ players[2].username }}</span>
+      <div class="strike-dots" *ngIf="!players[2]?.isFinished">
+        <span class="dot" [class.missed]="players[2].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[2].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[2].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 2 && !players[2]?.isEliminated && !players[2]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[2]?.isFinished">Rank #{{ players[2]?.rank || 1 }} 👑</span>
+    </div>
+  </div>
+
+  <div 
+    class="player-dock dock-bottom-left" 
+    *ngIf="players[3]?.isActive"
+    [class.dock-active]="currentTurnIndex === 3"
+    [class.dock-eliminated]="players[3]?.isEliminated"
+    [class.dock-winner]="players[3]?.isFinished"
+    (click)="rollDice(3)">
+    <div class="dock-dice-box">
+      <div class="dice-face" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">
+        <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+      </div>
+      <span *ngIf="players[3]?.isEliminated" class="eliminated-txt">OUT</span>
+      <span *ngIf="players[3]?.isFinished" class="finished-txt">DONE</span>
+    </div>
+    <div class="dock-badge red-badge">
+      <span class="dock-user-label">{{ players[3].username }}</span>
+      <div class="strike-dots" *ngIf="!players[3]?.isFinished">
+        <span class="dot" [class.missed]="players[3].missedTurns >= 1"></span>
+        <span class="dot" [class.missed]="players[3].missedTurns >= 2"></span>
+        <span class="dot" [class.missed]="players[3].missedTurns >= 3"></span>
+      </div>
+      <span class="dock-timer-pill" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">⏱️ {{ turnTimer }}s</span>
+      <span class="rank-badge" *ngIf="players[3]?.isFinished">Rank #{{ players[3]?.rank || 1 }} 👑</span>
+    </div>
+  </div>
+
+  <!-- 15x15 Ludo Board Grid -->
+  <div class="ludo-board">
+    <!-- Green Yard -->
+    <div class="quadrant quad-green" [class.quad-disabled]="!players[0]?.isActive || players[0]?.isEliminated">
+      <div class="quad-header-bar" *ngIf="players[0]?.isActive">
+        <span class="player-tag-name">{{ players[0].username }}</span>
+      </div>
+      <div class="quad-inner-white">
+        <div class="socket-grid">
+          <div class="yard-socket" *ngFor="let t of players[0]?.tokens">
+            <div 
+              *ngIf="t.isHome && players[0]?.isActive && !players[0]?.isEliminated" 
+              class="pawn-pin green-pin" 
+              [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 0 && isMyTurn"
+              (click)="moveToken(players[0], t.id); $event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Yellow Yard -->
+    <div class="quadrant quad-yellow" [class.quad-disabled]="!players[1]?.isActive || players[1]?.isEliminated">
+      <div class="quad-header-bar" *ngIf="players[1]?.isActive">
+        <span class="player-tag-name">{{ players[1].username }}</span>
+      </div>
+      <div class="quad-inner-white">
+        <div class="socket-grid">
+          <div class="yard-socket" *ngFor="let t of players[1]?.tokens">
+            <div 
+              *ngIf="t.isHome && players[1]?.isActive && !players[1]?.isEliminated" 
+              class="pawn-pin yellow-pin" 
+              [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 1 && isMyTurn"
+              (click)="moveToken(players[1], t.id); $event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blue Yard -->
+    <div class="quadrant quad-blue" [class.quad-disabled]="!players[2]?.isActive || players[2]?.isEliminated">
+      <div class="quad-header-bar" *ngIf="players[2]?.isActive">
+        <span class="player-tag-name">{{ players[2].username }}</span>
+      </div>
+      <div class="quad-inner-white">
+        <div class="socket-grid">
+          <div class="yard-socket" *ngFor="let t of players[2]?.tokens">
+            <div 
+              *ngIf="t.isHome && players[2]?.isActive && !players[2]?.isEliminated" 
+              class="pawn-pin blue-pin" 
+              [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 2 && isMyTurn"
+              (click)="moveToken(players[2], t.id); $event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Red Yard -->
+    <div class="quadrant quad-red" [class.quad-disabled]="!players[3]?.isActive || players[3]?.isEliminated">
+      <div class="quad-header-bar" *ngIf="players[3]?.isActive">
+        <span class="player-tag-name">{{ players[3].username }}</span>
+      </div>
+      <div class="quad-inner-white">
+        <div class="socket-grid">
+          <div class="yard-socket" *ngFor="let t of players[3]?.tokens">
+            <div 
+              *ngIf="t.isHome && players[3]?.isActive && !players[3]?.isEliminated" 
+              class="pawn-pin red-pin" 
+              [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 3 && isMyTurn"
+              (click)="moveToken(players[3], t.id); $event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Triangles -->
+    <div class="board-center-triangle">
+      <div class="center-tri tri-top yellow-tri">
+        <span class="home-counter counter-yellow" *ngIf="getHomeTokensCount(players[1]) > 0">{{ getHomeTokensCount(players[1]) }}</span>
+      </div>
+      <div class="center-tri tri-right blue-tri">
+        <span class="home-counter counter-blue" *ngIf="getHomeTokensCount(players[2]) > 0">{{ getHomeTokensCount(players[2]) }}</span>
+      </div>
+      <div class="center-tri tri-bottom red-tri">
+        <span class="home-counter counter-red" *ngIf="getHomeTokensCount(players[3]) > 0">{{ getHomeTokensCount(players[3]) }}</span>
+      </div>
+      <div class="center-tri tri-left green-tri">
+        <span class="home-counter counter-green" *ngIf="getHomeTokensCount(players[0]) > 0">{{ getHomeTokensCount(players[0]) }}</span>
+      </div>
+    </div>
+
+    <!-- Track Cells -->
+    <div class="track-grid">
+      <ng-container *ngFor="let r of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+        <ng-container *ngFor="let c of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+          <div 
+            class="cell"
+            *ngIf="!((r<6 && c<6) || (r<6 && c>8) || (r>8 && c<6) || (r>8 && c>8) || (r>=6 && r<=8 && c>=6 && c<=8))"
+            [style.grid-row]="r + 1"
+            [style.grid-column]="c + 1"
+            [class.cell-green]="(r === 7 && c > 0 && c < 6) || (r === 6 && c === 1)"
+            [class.cell-yellow]="(c === 7 && r > 0 && r < 6) || (r === 1 && c === 8)"
+            [class.cell-blue]="(r === 7 && c > 8 && c < 14) || (r === 8 && c === 13)"
+            [class.cell-red]="(c === 7 && r > 8 && r < 14) || (r === 13 && c === 6)">
+            
+            <span class="cell-arrow arrow-right" *ngIf="r === 7 && c === 0">▶</span>
+            <span class="cell-arrow arrow-down" *ngIf="r === 0 && c === 7">▼</span>
+            <span class="cell-arrow arrow-left" *ngIf="r === 7 && c === 14">◀</span>
+            <span class="cell-arrow arrow-up" *ngIf="r === 14 && c === 7">▲</span>
+
+            <span class="safe-star" *ngIf="SAFE_CELLS.includes(r + ',' + c)">☆</span>
+
+            <div class="cell-pawn-stack" *ngIf="getTokensAtCell(r, c).length > 0">
+              <div 
+                *ngFor="let item of getTokensAtCell(r, c)"
+                class="pawn-pin on-board-pawn"
+                [class.stacked-mini]="getTokensAtCell(r, c).length > 1"
+                [ngClass]="item.player.color + '-pin'"
+                [class.movable]="movableTokenIds.includes(item.token.id) && item.player.color === currentPlayer.color && isMyTurn"
+                (click)="moveToken(item.player, item.token.id); $event.stopPropagation()">
+              </div>
+            </div>
+
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+  </div>
+
+  <!-- Eliminated Overlay -->
+  <div class="eliminated-overlay" *ngIf="isMeEliminated">
+    <div class="eliminated-card">
+      <span class="danger-icon">❌</span>
+      <h3>YOU ARE ELIMINATED</h3>
+      <p>You missed 3 consecutive turns. Other players are completing the match.</p>
+      <button class="btn-leave-dashboard" (click)="leaveRoomToDashboard()">
+        Leave to Dashboard
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #dicePips let-val="val">
+  <div class="pip-matrix pip-val-{{ val }}">
+    <span class="pip pip-1" *ngIf="val === 1 || val === 3 || val === 5"></span>
+    <span class="pip pip-tl" *ngIf="val >= 2"></span>
+    <span class="pip pip-br" *ngIf="val >= 2"></span>
+    <span class="pip pip-tr" *ngIf="val >= 4"></span>
+    <span class="pip pip-bl" *ngIf="val >= 4"></span>
+    <span class="pip pip-ml" *ngIf="val === 6"></span>
+    <span class="pip pip-mr" *ngIf="val === 6"></span>
+  </div>
+</ng-template>

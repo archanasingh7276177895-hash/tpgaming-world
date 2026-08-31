@@ -1,0 +1,40 @@
+<div class="fruit-arena">
+  <!-- Scoreboard & Timer -->
+  <div class="hud-bar">
+    <div class="score-card player-me">
+      <span class="user-label">You ({{ currentUser?.username }})</span>
+      <span class="score-val">🍎 {{ myScore }}</span>
+    </div>
+
+    <div class="timer-center" [class.urgent]="gameTimeRemaining <= 10">
+      <span class="timer-tag">TIME REMAINING</span>
+      <span class="timer-digits">00:{{ gameTimeRemaining < 10 ? '0' : '' }}{{ gameTimeRemaining }}</span>
+    </div>
+
+    <div class="score-card player-opp">
+      <span class="user-label">{{ opponentName }}</span>
+      <span class="score-val">🎯 {{ opponentScore }}</span>
+    </div>
+  </div>
+
+  <!-- Interactive Slicing Stage -->
+  <div class="stage-canvas">
+    <div class="danger-warning">⚠️ DO NOT HIT THE BOMBS 💣 (INSTANT LOSS)</div>
+
+    <div 
+      *ngFor="let item of items" 
+      class="floating-item"
+      [class.bomb]="item.type === 'bomb'"
+      [class.sliced]="item.sliced"
+      [style.left.%]="item.x"
+      [style.top.px]="item.y"
+      [style.width.px]="item.size"
+      [style.height.px]="item.size"
+      [style.font-size.px]="item.size * 0.75"
+      (mouseenter)="sliceItem(item)"
+      (touchstart)="sliceItem(item)">
+      {{ item.emoji }}
+      <span class="point-badge" *ngIf="item.sliced && item.type === 'fruit'">+{{ item.points }}</span>
+    </div>
+  </div>
+</div>

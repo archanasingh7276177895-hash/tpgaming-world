@@ -1,0 +1,118 @@
+<div class="passbook-container">
+  <!-- Header Bar -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goHome()">← Back to Dashboard</button>
+    <h2>📜 Account Passbook</h2>
+  </div>
+
+  <!-- Wallet Snapshot Cards -->
+  <div class="metrics-grid">
+    <div class="metric-card balance-card">
+      <div class="metric-icon">💰</div>
+      <div>
+        <span class="metric-label">Current Balance</span>
+        <h3 class="text-green">₹{{ userBalance }}</h3>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon credit">📥</div>
+      <div>
+        <span class="metric-label">Total Credited</span>
+        <h3 class="text-green">+₹{{ totalCredits }}</h3>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon debit">📤</div>
+      <div>
+        <span class="metric-label">Total Debited</span>
+        <h3 class="text-red">-₹{{ totalDebits }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Statement Card -->
+  <div class="statement-card">
+    <div class="card-controls">
+      <!-- Filter Tabs -->
+      <div class="category-tabs">
+        <button [class.active]="selectedFilter === 'ALL'" (click)="setFilter('ALL')">All Entries</button>
+        <button [class.active]="selectedFilter === 'CREDIT'" (click)="setFilter('CREDIT')">Money In (+)</button>
+        <button [class.active]="selectedFilter === 'DEBIT'" (click)="setFilter('DEBIT')">Money Out (-)</button>
+      </div>
+
+      <!-- Search & Type Filter -->
+      <div class="search-group">
+        <select [(ngModel)]="selectedType" (change)="currentPage = 1">
+          <option value="ALL">All Types</option>
+          <option value="DEPOSIT">Deposits</option>
+          <option value="WITHDRAWAL">Withdrawals</option>
+          <option value="GAME_FEE">Game Buy-ins</option>
+          <option value="GAME_WIN">Winnings</option>
+        </select>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search description, ref..." />
+      </div>
+    </div>
+
+    <!-- Ledger Table -->
+    <div class="table-responsive">
+      <table class="passbook-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Description & Reference</th>
+            <th>Amount (₹)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="loading">
+            <td colspan="5" class="text-center py-4">Loading statement records...</td>
+          </tr>
+          <tr *ngIf="!loading && paginatedTransactions.length === 0">
+            <td colspan="5" class="text-center py-4 text-muted">No transactions found in this period.</td>
+          </tr>
+          <tr *ngFor="let txn of paginatedTransactions">
+            <td class="time-col">
+              <strong>{{ txn.createdAt | date:'mediumDate' }}</strong>
+              <small>{{ txn.createdAt | date:'shortTime' }}</small>
+            </td>
+
+            <td>
+              <span class="type-tag" [ngClass]="'tag-' + (txn.type || 'DEFAULT').toLowerCase()">
+                {{ txn.type }}
+              </span>
+            </td>
+
+            <td>
+              <div class="desc-text">{{ txn.description }}</div>
+              <small class="ref-text" *ngIf="txn.referenceId">Ref: <code>{{ txn.referenceId }}</code></small>
+              <small class="remark-text" *ngIf="txn.adminRemark">Reason: {{ txn.adminRemark }}</small>
+            </td>
+
+            <td class="amount-col" [class.text-green]="txn.category === 'CREDIT'" [class.text-red]="txn.category === 'DEBIT'">
+              {{ txn.category === 'CREDIT' ? '+' : '-' }}₹{{ txn.amount }}
+            </td>
+
+            <td>
+              <span class="status-badge" [ngClass]="'status-' + (txn.status || 'SUCCESS').toLowerCase()">
+                {{ txn.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    <div class="pagination-footer" *ngIf="filteredTransactions.length > pageSize">
+      <span>Page {{ currentPage }} of {{ totalPages }} ({{ filteredTransactions.length }} total)</span>
+      <div class="pagination-btns">
+        <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
