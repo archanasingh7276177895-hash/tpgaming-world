@@ -1,7 +1,7 @@
 <div class="passbook-container">
   <!-- Header Bar -->
   <div class="page-header">
-    <button class="btn-back" (click)="goHome()">← Back to Dashboard</button>
+    <button type="button" class="btn-back" routerLink="/dashboard" (click)="goHome()">← Back to Dashboard</button>
     <h2>📜 Account Passbook</h2>
   </div>
 
@@ -37,9 +37,9 @@
     <div class="card-controls">
       <!-- Filter Tabs -->
       <div class="category-tabs">
-        <button [class.active]="selectedFilter === 'ALL'" (click)="setFilter('ALL')">All Entries</button>
-        <button [class.active]="selectedFilter === 'CREDIT'" (click)="setFilter('CREDIT')">Money In (+)</button>
-        <button [class.active]="selectedFilter === 'DEBIT'" (click)="setFilter('DEBIT')">Money Out (-)</button>
+        <button type="button" [class.active]="selectedFilter === 'ALL'" (click)="setFilter('ALL')">All Entries</button>
+        <button type="button" [class.active]="selectedFilter === 'CREDIT'" (click)="setFilter('CREDIT')">Money In (+)</button>
+        <button type="button" [class.active]="selectedFilter === 'DEBIT'" (click)="setFilter('DEBIT')">Money Out (-)</button>
       </div>
 
       <!-- Search & Type Filter -->
@@ -110,8 +110,8 @@
     <div class="pagination-footer" *ngIf="filteredTransactions.length > pageSize">
       <span>Page {{ currentPage }} of {{ totalPages }} ({{ filteredTransactions.length }} total)</span>
       <div class="pagination-btns">
-        <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
-        <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+        <button type="button" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <button type="button" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
       </div>
     </div>
   </div>

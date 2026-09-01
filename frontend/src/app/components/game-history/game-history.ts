@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 export interface GameMatchRecord {
   roomId: string;
@@ -16,7 +16,7 @@ export interface GameMatchRecord {
 @Component({
   selector: 'app-game-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './game-history.html',
   styleUrl: './game-history.css'
 })
@@ -37,7 +37,6 @@ export class GameHistoryComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // jwtInterceptor will automatically supply the Bearer token header
     this.http.get<{ success: boolean; data: GameMatchRecord[] }>(
       'https://tpgaming-world.onrender.com/api/transaction/game-history'
     ).subscribe({
@@ -77,6 +76,10 @@ export class GameHistoryComponent implements OnInit {
   }
 
   backToDashboard(): void {
-    this.router.navigate(['/dashboard']);
+    console.log('Navigating back to dashboard...');
+    this.router.navigate(['/dashboard']).catch((err) => {
+      console.warn('Direct route /dashboard failed, redirecting to root:', err);
+      this.router.navigate(['/']);
+    });
   }
 }

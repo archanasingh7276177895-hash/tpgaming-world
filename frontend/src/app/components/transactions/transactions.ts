@@ -2,11 +2,12 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './transactions.html',
   styleUrl: './transactions.css'
 })
@@ -29,7 +30,7 @@ export class TransactionsComponent implements OnInit {
 
   private readonly API_URL = 'https://tpgaming-world.onrender.com/api/transactions/my-transactions';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUserData();
@@ -109,5 +110,8 @@ export class TransactionsComponent implements OnInit {
 
   goHome(): void {
     this.navigateBack.emit();
+    this.router.navigate(['/dashboard']).catch(() => {
+      this.router.navigate(['/']);
+    });
   }
 }
