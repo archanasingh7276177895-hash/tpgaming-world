@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
 
 export interface GameMatchRecord {
   roomId: string;
@@ -16,17 +15,19 @@ export interface GameMatchRecord {
 @Component({
   selector: 'app-game-history',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './game-history.html',
   styleUrl: './game-history.css'
 })
 export class GameHistoryComponent implements OnInit {
+  @Output() navigateBack = new EventEmitter<void>();
+
   history: GameMatchRecord[] = [];
   isLoading: boolean = true;
   filter: string = 'ALL';
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     console.log('🎮 [GameHistoryComponent] Mounted');
@@ -41,7 +42,6 @@ export class GameHistoryComponent implements OnInit {
       'https://tpgaming-world.onrender.com/api/transaction/game-history'
     ).subscribe({
       next: (res) => {
-        console.log('📦 [GameHistory] API Response:', res);
         this.isLoading = false;
         if (res && res.success) {
           this.history = Array.isArray(res.data) ? res.data : [];
@@ -76,10 +76,6 @@ export class GameHistoryComponent implements OnInit {
   }
 
   backToDashboard(): void {
-    console.log('Navigating back to dashboard...');
-    this.router.navigate(['/dashboard']).catch((err) => {
-      console.warn('Direct route /dashboard failed, redirecting to root:', err);
-      this.router.navigate(['/']);
-    });
+    this.navigateBack.emit();
   }
 }

@@ -26,22 +26,26 @@
 
   <!-- Game History View -->
   <app-game-history 
-    *ngIf="currentPage === 'game-history'">
+    *ngIf="currentPage === 'game-history'"
+    (navigateBack)="currentPage = 'dashboard'">
   </app-game-history>
 
   <!-- Transactions View -->
   <app-transactions 
-    *ngIf="currentPage === 'transactions'">
+    *ngIf="currentPage === 'transactions'"
+    (navigateBack)="currentPage = 'dashboard'">
   </app-transactions>
 
   <!-- Deposit View -->
   <app-deposit 
-    *ngIf="currentPage === 'deposit'">
+    *ngIf="currentPage === 'deposit'"
+    (navigateBack)="currentPage = 'dashboard'">
   </app-deposit>
 
   <!-- Withdrawal View -->
   <app-withdrawal 
-    *ngIf="currentPage === 'withdrawal'">
+    *ngIf="currentPage === 'withdrawal'"
+    (navigateBack)="currentPage = 'dashboard'">
   </app-withdrawal>
 
   <!-- Admin View -->
@@ -51,7 +55,8 @@
 
   <!-- Change Password View -->
   <app-change-password 
-    *ngIf="currentPage === 'change-password'">
+    *ngIf="currentPage === 'change-password'"
+    (navigateBack)="currentPage = 'dashboard'">
   </app-change-password>
 
   <!-- Active Game Arena View -->

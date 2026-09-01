@@ -2,7 +2,7 @@
   
   <!-- Header Bar -->
   <div class="history-header">
-    <button type="button" class="btn-back" routerLink="/dashboard" (click)="backToDashboard()">← Back</button>
+    <button type="button" class="btn-back" (click)="backToDashboard()">← Back</button>
     <h2>📜 Game History & Matches</h2>
     <div class="stats-counter" *ngIf="!isLoading">
       Total Matches: <strong>{{ history.length }}</strong>
