@@ -34,7 +34,7 @@ export class WithdrawalComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
-  private readonly API_URL = 'http://localhost:5000/api/withdraw';
+  private readonly API_URL = 'https://tpgaming-world.onrender.com/api/withdraw';
 
   constructor(private http: HttpClient) {}
 

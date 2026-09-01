@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
 
 // Initialize Express App
 const app = express();
@@ -20,10 +19,26 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // ==========================================
+// ALLOWED ORIGINS CONFIGURATION
+// ==========================================
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+  'https://tpgaming-frontend.onrender.com' // Your Render static site domain
+];
+
+// ==========================================
 // MIDDLEWARES & CORS
 // ==========================================
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (e.g. mobile apps, curl requests) or if origin is in allowed list
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.onrender.com')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -93,7 +108,13 @@ try {
   const { Server } = require('socket.io');
   const io = new Server(server, {
     cors: { 
-      origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.onrender.com')) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       methods: ['GET', 'POST'],
       credentials: true
     }

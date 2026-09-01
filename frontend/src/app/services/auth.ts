@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 })
 export class AuthService {
   // Ensure /api/auth is at the end of the URL
-  private baseUrl = 'http://localhost:5000/api/auth';
+  private baseUrl = 'https://tpgaming-world.onrender.com/api/auth';
   private currentUserSubject = new BehaviorSubject<any>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 

@@ -37,7 +37,7 @@ export class AdminDashboardComponent implements OnInit {
   users: any[] = [];
   loading: boolean = false;
 
-  private readonly BASE_URL = 'http://localhost:5000/api/admin';
+  private readonly BASE_URL = 'https://tpgaming-world.onrender.com/api/admin';
 
   constructor(private http: HttpClient) {}
 
@@ -258,7 +258,7 @@ export class AdminDashboardComponent implements OnInit {
     let cleanPath = imagePath.replace(/\\/g, '/');
     if (!cleanPath.startsWith('/uploads/') && !cleanPath.startsWith('uploads/')) cleanPath = `uploads/${cleanPath}`;
     if (!cleanPath.startsWith('/')) cleanPath = `/${cleanPath}`;
-    return `http://localhost:5000${cleanPath}`;
+    return `https://tpgaming-world.onrender.com${cleanPath}`;
   }
 
   openImageModal(url: string | undefined): void {

@@ -21,7 +21,7 @@ export class ChangePasswordComponent {
   errorMessage: string = '';
   successMessage: string = '';
 
-  private readonly API_URL = 'http://localhost:5000/api/auth/change-password';
+  private readonly API_URL = 'https://tpgaming-world.onrender.com/api/auth/change-password';
 
   constructor(private http: HttpClient) {}
 

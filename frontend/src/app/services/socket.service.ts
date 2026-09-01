@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
   private socket: Socket | null = null;
-  private readonly SOCKET_URL = 'http://localhost:5000';
+  private readonly SOCKET_URL = 'https://tpgaming-world.onrender.com';
 
   connect(): void {
     if (!this.socket) {

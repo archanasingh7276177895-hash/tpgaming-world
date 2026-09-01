@@ -73,7 +73,7 @@ export class DepositComponent implements OnInit {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.post('http://localhost:5000/deposit/request', formData, { headers }).subscribe({
+    this.http.post('https://tpgaming-world.onrender.com/deposit/request', formData, { headers }).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.isError = false;
@@ -94,7 +94,7 @@ export class DepositComponent implements OnInit {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.get('http://localhost:5000/deposit/my-history', { headers }).subscribe({
+    this.http.get('https://tpgaming-world.onrender.com/deposit/my-history', { headers }).subscribe({
       next: (res: any) => {
         this.history = res;
       },

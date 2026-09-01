@@ -27,7 +27,7 @@ export class TransactionsComponent implements OnInit {
   totalCredits: number = 0;
   totalDebits: number = 0;
 
-  private readonly API_URL = 'http://localhost:5000/api/transactions/my-transactions';
+  private readonly API_URL = 'https://tpgaming-world.onrender.com/api/transactions/my-transactions';
 
   constructor(private http: HttpClient) {}
 

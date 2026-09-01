@@ -39,7 +39,7 @@ export class GameHistoryComponent implements OnInit {
 
     // jwtInterceptor will automatically supply the Bearer token header
     this.http.get<{ success: boolean; data: GameMatchRecord[] }>(
-      'http://localhost:5000/api/transaction/game-history'
+      'https://tpgaming-world.onrender.com/api/transaction/game-history'
     ).subscribe({
       next: (res) => {
         console.log('📦 [GameHistory] API Response:', res);
