@@ -74,6 +74,20 @@ router.post('/request', authMiddleware, upload.single('screenshot'), async (req,
     });
 
     await deposit.save();
+
+    // ⚡ Real-Time Socket.io Notification to Admin
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('new_deposit_request', {
+        depositId: deposit._id,
+        username: req.user.username,
+        amount: numAmount,
+        utr: cleanUtr,
+        createdAt: deposit.createdAt
+      });
+      console.log(`📡 [Socket.io] Broadcasted new_deposit_request for user: ${req.user.username}`);
+    }
+
     res.status(201).json({ message: 'Deposit request submitted! Admin will verify and credit your wallet.', deposit });
 
   } catch (err) {

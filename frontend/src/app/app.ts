@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
     this.checkLoginStatus();
 
     this.socketService.onBalanceUpdated().subscribe((res: any) => {
-      if (res && res.newBalance !== undefined) {
+      if (res && res.newBalance !== undefined && res.username === this.username) {
         this.userBalance = Number(res.newBalance);
 
         if (this.currentUser) {

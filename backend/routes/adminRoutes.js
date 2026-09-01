@@ -95,6 +95,12 @@ router.post('/users/:id/balance', adminAuth, async (req, res) => {
     user.walletBalance = Math.max(0, updatedBalance);
     await user.save();
 
+    // ⚡ Socket Broadcast for real-time wallet update
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('balance_updated', { username: user.username, newBalance: user.balance });
+    }
+
     res.json({ message: `Updated balance for ${user.username} to ₹${user.balance}`, newBalance: user.balance });
   } catch (err) {
     res.status(500).json({ message: 'Error updating user balance.' });
@@ -153,10 +159,17 @@ router.post('/deposits/approve/:id', adminAuth, async (req, res) => {
     await deposit.save();
 
     const creditAmount = Number(deposit.amount);
-    await User.updateOne(
+    const updatedUser = await User.findOneAndUpdate(
       { _id: user._id },
-      { $inc: { balance: creditAmount, walletBalance: creditAmount } }
+      { $inc: { balance: creditAmount, walletBalance: creditAmount } },
+      { new: true } // Returns the updated document
     );
+
+    // ⚡ Socket Broadcast for real-time wallet update
+    const io = req.app.get('io');
+    if (io && updatedUser) {
+      io.emit('balance_updated', { username: updatedUser.username, newBalance: updatedUser.balance });
+    }
 
     res.json({ message: `Approved ₹${creditAmount} for ${user.username}!`, deposit });
   } catch (err) {
@@ -226,7 +239,7 @@ router.post('/withdrawals/reject/:id', adminAuth, async (req, res) => {
     const refundAmount = Number(withdrawal.amount);
 
     if (targetId) {
-      await User.updateOne(
+      const updatedUser = await User.findOneAndUpdate(
         {
           $or: [
             { _id: mongoose.Types.ObjectId.isValid(targetId) ? targetId : null },
@@ -234,8 +247,15 @@ router.post('/withdrawals/reject/:id', adminAuth, async (req, res) => {
             { userId: targetId }
           ]
         },
-        { $inc: { balance: refundAmount, walletBalance: refundAmount } }
+        { $inc: { balance: refundAmount, walletBalance: refundAmount } },
+        { new: true }
       );
+
+      // ⚡ Socket Broadcast to refund balance in real-time
+      const io = req.app.get('io');
+      if (io && updatedUser) {
+        io.emit('balance_updated', { username: updatedUser.username, newBalance: updatedUser.balance });
+      }
     }
 
     res.json({ message: `Withdrawal rejected. ₹${refundAmount} refunded to player.`, withdrawal });
