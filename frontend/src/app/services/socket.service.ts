@@ -9,13 +9,29 @@ export class SocketService {
   private socket: Socket | null = null;
   private readonly SOCKET_URL = 'https://tpgaming-world.onrender.com';
 
+  get rawSocket(): Socket | null {
+    return this.socket;
+  }
+
   connect(): void {
     if (!this.socket) {
       this.socket = io(this.SOCKET_URL, {
         transports: ['websocket', 'polling']
       });
+
+      this.socket.on('connect', () => {
+        console.log('⚡ [Socket] Connected:', this.socket?.id);
+      });
+
+      this.socket.on('disconnect', (reason) => {
+        console.warn('⚠️ [Socket] Disconnected:', reason);
+      });
+    } else if (this.socket.disconnected) {
+      this.socket.connect();
     }
   }
+
+  // --- EMITTERS ---
 
   joinMatchmaking(payload: { userId: string; username: string; gameType: string; playerMode: number | string; entryFee: number }): void {
     this.socket?.emit('join_matchmaking', payload);
@@ -45,57 +61,77 @@ export class SocketService {
     this.socket?.emit('forfeit_match', { roomId, forfeitUserId });
   }
 
+  // --- LISTENERS (With proper cleanup) ---
+
   onMatchmakingStatus(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('matchmaking_status', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('matchmaking_status', handler);
+      return () => this.socket?.off('matchmaking_status', handler);
     });
   }
 
   onMatchFound(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('match_found', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('match_found', handler);
+      return () => this.socket?.off('match_found', handler);
     });
   }
 
   onMatchmakingError(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('matchmaking_error', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('matchmaking_error', handler);
+      return () => this.socket?.off('matchmaking_error', handler);
     });
   }
 
   onMatchmakingCancelled(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('matchmaking_cancelled', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('matchmaking_cancelled', handler);
+      return () => this.socket?.off('matchmaking_cancelled', handler);
     });
   }
 
   onGameAction(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('game_action_received', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('game_action_received', handler);
+      return () => this.socket?.off('game_action_received', handler);
     });
   }
 
   onPlayerRank(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('player_finished_rank', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('player_finished_rank', handler);
+      return () => this.socket?.off('player_finished_rank', handler);
     });
   }
 
   onPlayerEliminated(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('player_eliminated_sync', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('player_eliminated_sync', handler);
+      return () => this.socket?.off('player_eliminated_sync', handler);
     });
   }
 
   onGameEnded(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('game_ended', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('game_ended', handler);
+      return () => this.socket?.off('game_ended', handler);
     });
   }
 
   onBalanceUpdated(): Observable<any> {
     return new Observable((observer) => {
-      this.socket?.on('balance_updated', (data) => observer.next(data));
+      const handler = (data: any) => observer.next(data);
+      this.socket?.on('balance_updated', handler);
+      return () => this.socket?.off('balance_updated', handler);
     });
   }
 }

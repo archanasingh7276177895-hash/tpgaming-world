@@ -70,8 +70,11 @@
 </main>
 
 <!-- Matchmaking Modal -->
+<!-- Matchmaking Modal -->
 <app-matchmaking-modal
   *ngIf="activeMatchmakingConfig"
+  [gameConfig]="activeMatchmakingConfig"
+  [user]="currentUser"
   (matchReady)="onMatchReady($event)"
-  (cancelMatchmaking)="activeMatchmakingConfig = null">
+  (cancel)="activeMatchmakingConfig = null">
 </app-matchmaking-modal>
