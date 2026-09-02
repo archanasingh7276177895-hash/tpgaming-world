@@ -68,6 +68,25 @@ router.post('/request', authMiddleware, async (req, res) => {
 
     await withdrawal.save();
 
+    // ⚡ Real-Time Socket Broadcasts
+    const io = req.app.get('io');
+    if (io) {
+      // 1. Instantly sync user's active screen balance
+      io.emit('balance_updated', {
+        username: user.username,
+        newBalance: updatedBalance
+      });
+
+      // 2. Alert Admin panel of a new pending withdrawal
+      io.emit('new_withdrawal_request', {
+        withdrawalId: withdrawal._id,
+        username: user.username,
+        amount: numAmount,
+        payoutMethod: withdrawal.payoutMethod,
+        createdAt: withdrawal.createdAt
+      });
+    }
+
     res.status(201).json({
       message: 'Withdrawal request submitted successfully!',
       newBalance: updatedBalance,

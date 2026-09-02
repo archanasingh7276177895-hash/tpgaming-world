@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -10,7 +10,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   templateUrl: './withdrawal.html',
   styleUrl: './withdrawal.css'
 })
-export class WithdrawalComponent implements OnInit {
+export class WithdrawalComponent implements OnInit, OnChanges {
+  @Input() walletBalance: number = 0;
   @Output() navigateBack = new EventEmitter<void>();
   @Output() balanceUpdated = new EventEmitter<number>();
 
@@ -39,8 +40,18 @@ export class WithdrawalComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadUserBalance();
+    if (this.walletBalance > 0) {
+      this.userBalance = this.walletBalance;
+    } else {
+      this.loadUserBalance();
+    }
     this.fetchWithdrawalHistory();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['walletBalance'] && changes['walletBalance'].currentValue !== undefined) {
+      this.userBalance = Number(changes['walletBalance'].currentValue);
+    }
   }
 
   private getAuthHeaders(): HttpHeaders {
@@ -162,16 +173,19 @@ export class WithdrawalComponent implements OnInit {
         this.successMessage = res.message || 'Withdrawal request submitted successfully!';
 
         if (res.newBalance !== undefined) {
-          this.userBalance = res.newBalance;
+          const freshBalance = Number(res.newBalance);
+          this.userBalance = freshBalance;
 
           const userStr = localStorage.getItem('user');
           if (userStr) {
             const user = JSON.parse(userStr);
-            user.balance = res.newBalance;
-            user.walletBalance = res.newBalance;
+            user.balance = freshBalance;
+            user.walletBalance = freshBalance;
             localStorage.setItem('user', JSON.stringify(user));
           }
-          this.balanceUpdated.emit(res.newBalance);
+
+          // Emit to parent so app header updates immediately
+          this.balanceUpdated.emit(freshBalance);
         }
 
         // Reset inputs

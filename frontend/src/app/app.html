@@ -45,6 +45,8 @@
   <!-- Withdrawal View -->
   <app-withdrawal 
     *ngIf="currentPage === 'withdrawal'"
+    [walletBalance]="userBalance"
+    (balanceUpdated)="userBalance = $event"
     (navigateBack)="currentPage = 'dashboard'">
   </app-withdrawal>
 
