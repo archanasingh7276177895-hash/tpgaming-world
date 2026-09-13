@@ -9,12 +9,17 @@
   --border-color: #334155;
 }
 
-body {
+html, body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .form-group {
@@ -56,4 +61,4 @@ body {
 
 .btn-primary:hover {
   opacity: 0.9;
-}/* You can add global styles to this file, and also import other style files */
+}

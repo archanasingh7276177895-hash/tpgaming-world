@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SocketService } from '../../../../services/socket.service';
 import { Subscription, interval } from 'rxjs';
@@ -28,6 +28,7 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
   @Input() room: any = null;
   @Input() currentUser: any = null;
   @Output() finishMatch = new EventEmitter<any>();
+  @ViewChild('canvasStage') canvasStage!: ElementRef<HTMLDivElement>;
 
   myScore: number = 0;
   opponentScore: number = 0;
@@ -41,6 +42,7 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
   private timerSubscription?: Subscription;
   private botScoreSubscription?: Subscription;
   private subscriptions: Subscription = new Subscription();
+  private isPointerDown: boolean = false;
 
   fruitTypes = [
     { name: 'Watermelon', emoji: '🍉', points: 10, size: 70 },
@@ -64,7 +66,6 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
     this.startClock();
 
     if (this.room?.isBotMatch) {
-      // Periodic simulated bot slicing points
       this.botScoreSubscription = interval(1800).subscribe(() => {
         if (Math.random() > 0.15) {
           const added = Math.floor(Math.random() * 25) + 10;
@@ -116,6 +117,7 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
   spawnItem(): void {
     const isBomb = Math.random() < 0.22;
     const randomFruit = this.fruitTypes[Math.floor(Math.random() * this.fruitTypes.length)];
+    const canvasWidth = this.canvasStage?.nativeElement?.clientWidth || 360;
 
     const newItem: FloatingItem = {
       id: ++this.itemCounter,
@@ -123,8 +125,8 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
       name: isBomb ? 'Bomb' : randomFruit.name,
       emoji: isBomb ? '💣' : randomFruit.emoji,
       points: isBomb ? 0 : randomFruit.points,
-      x: Math.floor(Math.random() * 70) + 15,
-      y: 520,
+      x: Math.floor(Math.random() * (canvasWidth - 100)) + 30,
+      y: 480,
       speedY: -(Math.random() * 4 + 9),
       speedX: (Math.random() - 0.5) * 2.5,
       sliced: false,
@@ -132,6 +134,58 @@ export class FruitEngineComponent implements OnInit, OnDestroy {
     };
 
     this.items.push(newItem);
+  }
+
+  // ==========================================
+  // SWIPE & TOUCH COORDINATE DETECTION
+  // ==========================================
+  handlePointerDown(event: PointerEvent): void {
+    this.isPointerDown = true;
+    this.detectSwipeSlice(event.clientX, event.clientY);
+  }
+
+  handlePointerMove(event: PointerEvent): void {
+    if (this.isPointerDown || event.buttons === 1) {
+      this.detectSwipeSlice(event.clientX, event.clientY);
+    }
+  }
+
+  handleTouchStart(event: TouchEvent): void {
+    if (event.touches.length > 0) {
+      const touch = event.touches[0];
+      this.detectSwipeSlice(touch.clientX, touch.clientY);
+    }
+  }
+
+  handleTouchMove(event: TouchEvent): void {
+    event.preventDefault(); // Prevents Android pull/scroll while slicing
+    if (event.touches.length > 0) {
+      const touch = event.touches[0];
+      this.detectSwipeSlice(touch.clientX, touch.clientY);
+    }
+  }
+
+  onItemHover(item: FloatingItem): void {
+    this.sliceItem(item);
+  }
+
+  private detectSwipeSlice(clientX: number, clientY: number): void {
+    if (!this.canvasStage) return;
+    const rect = this.canvasStage.nativeElement.getBoundingClientRect();
+    const relativeX = clientX - rect.left;
+    const relativeY = clientY - rect.top;
+
+    this.items.forEach(item => {
+      if (item.sliced) return;
+      const hitRadius = item.size / 2 + 15;
+      const centerX = item.x + item.size / 2;
+      const centerY = item.y + item.size / 2;
+
+      const distance = Math.hypot(relativeX - centerX, relativeY - centerY);
+      if (distance <= hitRadius) {
+        this.sliceItem(item);
+      }
+    });
   }
 
   sliceItem(item: FloatingItem): void {

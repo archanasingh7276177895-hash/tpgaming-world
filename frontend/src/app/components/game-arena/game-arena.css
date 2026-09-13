@@ -3,6 +3,8 @@
   margin: 20px auto;
   padding: 0 16px;
   color: #f8fafc;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* Header */
@@ -59,6 +61,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-forfeit:hover {
@@ -122,12 +125,16 @@
   font-size: 12px;
   font-weight: 800;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .player-name {
   font-size: 14px;
   font-weight: 700;
   color: #f1f5f9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .turn-chip {
@@ -138,6 +145,7 @@
   padding: 2px 8px;
   border-radius: 12px;
   animation: pulse 1.5s infinite;
+  white-space: nowrap;
 }
 
 .score-badge {
@@ -145,6 +153,7 @@
   font-size: 13px;
   font-weight: 700;
   color: #94a3b8;
+  white-space: nowrap;
 }
 
 .progress-track {
@@ -223,6 +232,8 @@
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .dice-box:hover {
@@ -250,6 +261,7 @@
   font-weight: 800;
   cursor: pointer;
   transition: background 0.2s;
+  touch-action: manipulation;
 }
 
 .btn-roll:hover:not(:disabled) {
@@ -271,6 +283,8 @@
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .victory-card {
@@ -281,6 +295,7 @@
   max-width: 420px;
   width: 100%;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
 }
 
 .win-card { border: 2px solid #eab308; }
@@ -313,6 +328,8 @@
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes spin {
@@ -328,4 +345,133 @@
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
+}
+
+/* ==========================================
+   MOBILE & ANDROID GAME ARENA ADAPTATIONS
+   ========================================== */
+@media (max-width: 768px) {
+  .arena-container {
+    margin: 8px auto;
+    padding: 0 8px;
+  }
+
+  .arena-header {
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+
+  .game-tag {
+    font-size: 12px;
+  }
+
+  .room-id {
+    font-size: 10px;
+  }
+
+  .prize-pill {
+    padding: 4px 10px;
+    gap: 4px;
+  }
+
+  .prize-pill .trophy { font-size: 16px; }
+  .prize-pill .amount { font-size: 15px; }
+  .prize-pill .label { font-size: 10px; }
+
+  .btn-forfeit {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .arena-board {
+    padding: 16px 12px;
+    gap: 20px;
+    border-radius: 12px;
+  }
+
+  .track-container {
+    gap: 12px;
+  }
+
+  .player-lane {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .lane-info {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .avatar-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .player-name {
+    font-size: 12px;
+  }
+
+  .score-badge {
+    font-size: 11px;
+  }
+
+  .progress-track {
+    height: 10px;
+  }
+
+  .pawn-marker {
+    top: -7px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .arena-controls {
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .dice-box {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+  }
+
+  .dice-num {
+    font-size: 28px;
+  }
+
+  .btn-roll {
+    padding: 10px 24px;
+    font-size: 14px;
+    width: 100%;
+    max-width: 240px;
+  }
+
+  .victory-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .victory-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+
+  .victory-card h2 {
+    font-size: 20px;
+  }
+
+  .winner-subtitle {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .reward-val {
+    font-size: 20px;
+  }
 }

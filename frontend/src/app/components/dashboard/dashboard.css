@@ -98,3 +98,75 @@
   font-size: 1rem;
   margin-top: 0.5rem;
 }
+
+/* ==========================================
+   MOBILE & ANDROID COMPRESSION (2-COLUMN GRID)
+   ========================================== */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0.75rem;
+  }
+
+  .welcome-banner {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+  }
+
+  .welcome-banner h2 {
+    font-size: 1.2rem;
+  }
+
+  .welcome-banner p {
+    font-size: 0.8rem;
+  }
+
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .game-card {
+    padding: 0.75rem 0.5rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .game-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .game-card h3 {
+    font-size: 0.95rem;
+    margin: 0.25rem 0;
+  }
+
+  .selector-group {
+    margin: 0.5rem 0;
+  }
+
+  .selector-group label {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .toggle-buttons, .tier-buttons {
+    gap: 0.3rem;
+  }
+
+  .toggle-btn, .tier-btn {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.7rem;
+    border-radius: 4px;
+  }
+
+  .btn-play {
+    padding: 0.55rem 0.25rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.4rem;
+  }
+}

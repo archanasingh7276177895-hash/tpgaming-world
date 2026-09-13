@@ -8,6 +8,8 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .nav-brand {
@@ -16,6 +18,7 @@
   gap: 10px;
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .brand-logo {
@@ -46,6 +49,7 @@
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
 /* Wallet Badge */
@@ -57,6 +61,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .wallet-label {
@@ -81,6 +86,7 @@
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-deposit {
@@ -196,4 +202,60 @@
 .text-danger:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
+}
+
+/* ==========================================
+   MOBILE & ANDROID SCREEN COMPRESSION
+   ========================================== */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 8px 12px;
+  }
+
+  .brand-logo {
+    font-size: 20px;
+  }
+
+  .brand-title {
+    font-size: 16px;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .wallet-badge {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .wallet-label {
+    display: none; /* Hide label on mobile to preserve screen width */
+  }
+
+  .wallet-amount {
+    font-size: 13px;
+  }
+
+  .btn-nav {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .user-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .user-btn span:not(.user-avatar):not(.dropdown-arrow) {
+    max-width: 65px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dropdown-menu {
+    width: 180px;
+  }
 }
