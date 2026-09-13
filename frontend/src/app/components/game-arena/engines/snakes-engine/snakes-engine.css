@@ -11,7 +11,7 @@
   aspect-ratio: 1 / 1;
   background: radial-gradient(circle at center, #1b63b8 0%, #0c366e 100%);
   border-radius: 24px;
-  padding: 55px; /* Ensures docks sit outside board perimeter */
+  padding: 55px;
   box-sizing: border-box;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   user-select: none;
@@ -78,7 +78,6 @@
   box-shadow: 0 0 15px #38bdf8;
 }
 
-/* Placed safely outside the 100-tile grid */
 .dock-top-left { top: 12px; left: 12px; }
 .dock-top-right { top: 12px; right: 12px; }
 .dock-bottom-right { bottom: 12px; right: 12px; }
@@ -154,9 +153,7 @@
   font-weight: 900;
 }
 
-/* ==========================================================================
-   100-Tile Board Layout & Layer Hierarchy
-   ========================================================================== */
+/* 100-Tile Board Layout & Layer Hierarchy */
 .snakes-board {
   position: relative;
   width: 100%;
@@ -199,7 +196,6 @@
   height: 100%;
 }
 
-/* Layer 1: Background Tiles Grid */
 .board-grid {
   position: absolute;
   inset: 0;
@@ -244,7 +240,6 @@
   border-radius: 4px;
 }
 
-/* Layer 2: SVG Vector Snakes & Ladders Graphics */
 .board-svg-overlay {
   position: absolute;
   inset: 0;
@@ -294,14 +289,13 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
 }
 
-/* Layer 3: Top-Most Player Tokens Layer */
 .tokens-overlay-grid {
   position: absolute;
   inset: 0;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  z-index: 50; /* Guarantees pins render above all snakes and ladders */
+  z-index: 50;
   pointer-events: none;
 }
 
@@ -438,4 +432,80 @@
 @keyframes snakeGlither {
   0% { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: 20; }
+}
+
+/* ==========================================================================
+   MOBILE & ANDROID DOCK RE-POSITIONING (NON-OVERLAPPING BOARD)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .snakes-stage-wrapper {
+    aspect-ratio: auto;
+    flex-direction: column;
+    padding: 10px 8px;
+    gap: 12px;
+    border-radius: 14px;
+  }
+
+  .snakes-board {
+    max-width: 100vw;
+    width: calc(100vw - 28px);
+    height: calc(100vw - 28px);
+    max-height: 380px;
+    order: 2; /* Centered in flow */
+  }
+
+  .player-dock {
+    position: static; /* Clear absolute floating */
+    width: auto;
+    min-height: 48px;
+    flex-direction: row;
+    padding: 6px 12px;
+    gap: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .dock-badge {
+    flex-direction: row;
+    gap: 8px;
+    width: auto;
+    padding: 2px 8px;
+  }
+
+  .dock-user-label {
+    max-width: 90px;
+    font-size: 12px;
+  }
+
+  .dock-dice-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+  }
+
+  .pip-matrix {
+    width: 26px;
+    height: 26px;
+  }
+
+  .pip {
+    width: 5px;
+    height: 5px;
+  }
+
+  /* Order docks: Opponents top, Player bottom */
+  .dock-top-left { order: 1; }
+  .dock-top-right { order: 1; }
+  .dock-bottom-right { order: 3; }
+  .dock-bottom-left { order: 3; }
+
+  .tile-num {
+    font-size: 8px;
+  }
+
+  .board-pin {
+    width: 16px;
+    height: 16px;
+    border-width: 1.5px;
+  }
 }

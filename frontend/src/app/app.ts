@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Components
@@ -52,6 +52,11 @@ export class AppComponent implements OnInit {
     this.socketService.connect();
     this.checkLoginStatus();
 
+    // Prime the initial browser history state
+    if (!window.history.state || !window.history.state.page) {
+      window.history.replaceState({ page: this.currentPage }, '', '');
+    }
+
     this.socketService.onBalanceUpdated().subscribe((res: any) => {
       if (res && res.newBalance !== undefined && res.username === this.username) {
         this.userBalance = Number(res.newBalance);
@@ -63,6 +68,19 @@ export class AppComponent implements OnInit {
         }
       }
     });
+  }
+
+  // Intercept Android hardware or gesture back button
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    if (this.activeMatchmakingConfig) {
+      this.activeMatchmakingConfig = null;
+      return;
+    }
+
+    if (this.currentPage !== 'dashboard') {
+      this.currentPage = 'dashboard';
+    }
   }
 
   checkLoginStatus() {
@@ -87,7 +105,10 @@ export class AppComponent implements OnInit {
   }
 
   onNavigate(page: string) {
-    this.currentPage = page;
+    if (this.currentPage !== page) {
+      this.currentPage = page;
+      window.history.pushState({ page }, '', '');
+    }
   }
 
   onLoginSuccess() {
@@ -103,6 +124,7 @@ export class AppComponent implements OnInit {
     localStorage.removeItem('jwt');
     localStorage.removeItem('user');
     this.currentPage = 'dashboard';
+    window.history.replaceState({ page: 'dashboard' }, '', '');
   }
 
   onLaunchGame(gameData: any) {
@@ -141,6 +163,7 @@ export class AppComponent implements OnInit {
 
       this.activeMatchmakingConfig = null;
       this.currentPage = 'game';
+      window.history.pushState({ page: 'game' }, '', '');
       return;
     }
 
@@ -159,10 +182,12 @@ export class AppComponent implements OnInit {
     this.activeMatchRoom = roomData;
     this.activeMatchmakingConfig = null;
     this.currentPage = 'game';
+    window.history.pushState({ page: 'game' }, '', '');
   }
 
   onExitGame() {
     this.activeMatchRoom = null;
     this.currentPage = 'dashboard';
+    window.history.pushState({ page: 'dashboard' }, '', '');
   }
 }
