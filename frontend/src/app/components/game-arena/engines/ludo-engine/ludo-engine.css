@@ -1,5 +1,7 @@
 :host {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -9,42 +11,45 @@
   box-sizing: border-box;
 }
 
-/* Master Stage Layout */
+/* Master Stage: Dynamic clamp based on viewport proportions */
 .ludo-stage-wrapper {
+  --board-dim: min(92vw, 68vh, 520px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 480px;
+  width: var(--board-dim);
   height: 100%;
+  max-height: 100dvh;
   margin: 0 auto;
-  padding: 6px 8px;
+  padding: 8px 0;
   box-sizing: border-box;
+  gap: 10px;
 }
 
 /* ================= DOCK BARS & SPACERS ================= */
 .dock-bar {
-  width: 100%;
+  width: var(--board-dim);
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  box-sizing: border-box;
   z-index: 10;
 }
 
 .top-dock-bar {
-  margin-bottom: auto;
+  margin-bottom: 2px;
 }
 
 .bottom-dock-bar {
-  margin-top: auto;
+  margin-top: 2px;
 }
 
 .dock-spacer {
   flex: 1;
-  min-width: 120px;
+  min-width: 100px;
 }
 
 .player-dock {
@@ -53,8 +58,8 @@
   gap: 6px;
   background: #1e293b;
   border: 1.5px solid #334155;
-  border-radius: 28px;
-  padding: 4px 8px;
+  border-radius: 24px;
+  padding: 4px 10px;
   min-width: 130px;
   max-width: 48%;
   cursor: pointer;
@@ -94,7 +99,7 @@
 
 .dock-user-label {
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -132,8 +137,8 @@
 
 /* Dice Container inside Dock */
 .dock-dice-box {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background: #0f172a;
   border: 1px solid #475569;
   border-radius: 8px;
@@ -190,14 +195,14 @@
 
 /* ================= BOARD FRAME & 15x15 GRID ================= */
 .board-frame {
-  width: min(94vw, 54vh);
-  height: min(94vw, 54vh);
+  width: var(--board-dim);
+  height: var(--board-dim);
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin: auto 0;
+  box-sizing: border-box;
 }
 
 .ludo-board {
@@ -206,9 +211,10 @@
   height: 100%;
   background: #0f172a;
   border: 3px solid #334155;
-  border-radius: 8px;
+  border-radius: 10px;
   box-sizing: border-box;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Bases / Quadrants (6x6 cells = 40% each) */
@@ -217,7 +223,7 @@
   width: 40%;
   height: 40%;
   box-sizing: border-box;
-  padding: 6%;
+  padding: 5%;
   display: flex;
   flex-direction: column;
 }
@@ -238,7 +244,7 @@
 }
 
 .player-tag-name {
-  font-size: min(2.5vw, 1.3vh);
+  font-size: min(1.8vh, 12px);
   color: #ffffff;
   font-weight: 800;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
@@ -246,7 +252,7 @@
 
 .quad-inner-white {
   flex: 1;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.75);
   border-radius: 8px;
   border: 1.5px solid rgba(255, 255, 255, 0.2);
   display: flex;
@@ -273,7 +279,7 @@
   justify-content: center;
 }
 
-/* ================= CENTER HOME (VECTOR SVG FIX) ================= */
+/* ================= CENTER HOME (VECTOR SVG) ================= */
 .board-center-triangle {
   position: absolute;
   top: 40%;
@@ -297,7 +303,7 @@
 
 .home-counter {
   position: absolute;
-  font-size: min(2.4vw, 1.4vh);
+  font-size: 11px;
   font-weight: bold;
   color: #ffffff;
   z-index: 3;
@@ -336,12 +342,12 @@
 .cell-red    { background: rgba(239, 68, 68, 0.4) !important; }
 
 .cell-arrow {
-  font-size: min(2vw, 1.2vh);
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .safe-star {
-  font-size: min(2.4vw, 1.4vh);
+  font-size: 11px;
   color: #facc15;
   font-weight: bold;
 }
