@@ -48,33 +48,41 @@ export class LudoEngineComponent implements OnInit, OnDestroy {
   private turnTimerSub?: Subscription;
   private subscriptions: Subscription = new Subscription();
 
+  // Precise clockwise start tiles on the 52-tile circuit
   readonly PLAYER_CONFIG = [
-    { color: 'green' as const, hex: '#00a859', startTile: 0 },
-    { color: 'yellow' as const, hex: '#ffcc00', startTile: 13 },
-    { color: 'blue' as const, hex: '#0088ff', startTile: 26 },
-    { color: 'red' as const, hex: '#e60000', startTile: 39 }
+    { color: 'green' as const, hex: '#00a859', startTile: 0 },   // Top-Left [6, 1]
+    { color: 'yellow' as const, hex: '#ffcc00', startTile: 13 }, // Top-Right [1, 8]
+    { color: 'blue' as const, hex: '#0088ff', startTile: 26 },   // Bottom-Right [8, 13]
+    { color: 'red' as const, hex: '#e60000', startTile: 39 }     // Bottom-Left [13, 6]
   ];
 
+  // 52-cell Outer Perimeter Path (Clockwise)
   readonly PATH_COORDINATES: [number, number][] = [
+    // Green Wing: Exit -> Top Arm
     [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
     [5, 6], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6],
-    [0, 7],
+    [0, 7], // Corner
+    // Yellow Wing: Exit -> Right Arm
     [0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8],
     [6, 9], [6, 10], [6, 11], [6, 12], [6, 13], [6, 14],
-    [7, 14],
+    [7, 14], // Corner
+    // Blue Wing: Exit -> Bottom Arm
     [8, 14], [8, 13], [8, 12], [8, 11], [8, 10], [8, 9],
     [9, 8], [10, 8], [11, 8], [12, 8], [13, 8], [14, 8],
-    [14, 7],
+    [14, 7], // Corner
+    // Red Wing: Exit -> Left Arm
     [14, 6], [13, 6], [12, 6], [11, 6], [10, 6], [9, 6],
     [8, 5], [8, 4], [8, 3], [8, 2], [8, 1], [8, 0],
-    [7, 0], [6, 0]
+    [7, 0], // Corner
+    [6, 0]  // Final approach before Green Home
   ];
 
+  // 5-cell Home Columns heading directly into each color's center triangle
   readonly HOME_RUNS = {
-    green: [[7, 1], [7, 2], [7, 3], [7, 4], [7, 5]],
+    green:  [[7, 1], [7, 2], [7, 3], [7, 4], [7, 5]],
     yellow: [[1, 7], [2, 7], [3, 7], [4, 7], [5, 7]],
-    blue: [[7, 13], [7, 12], [7, 11], [7, 10], [7, 9]],
-    red: [[13, 7], [12, 7], [11, 7], [10, 7], [9, 7]]
+    blue:   [[7, 13], [7, 12], [7, 11], [7, 10], [7, 9]],
+    red:    [[13, 7], [12, 7], [11, 7], [10, 7], [9, 7]]
   };
 
   readonly SAFE_CELLS = ['6,1', '2,6', '1,8', '6,12', '8,13', '12,8', '13,6', '8,2'];
@@ -88,9 +96,11 @@ export class LudoEngineComponent implements OnInit, OnDestroy {
     this.players = this.PLAYER_CONFIG.map((cfg, idx) => {
       let matchPlayer: any = null;
       if (is2P) {
+        // 2-Player: Green (0) vs Blue (2)
         if (idx === 0) matchPlayer = rawPlayers[0];
         if (idx === 2) matchPlayer = rawPlayers[1];
       } else {
+        // 4-Player: Green (0), Yellow (1), Blue (2), Red (3)
         matchPlayer = rawPlayers[idx];
       }
 
@@ -173,7 +183,10 @@ export class LudoEngineComponent implements OnInit, OnDestroy {
 
   get isMyTurn(): boolean {
     if (this.isMeEliminated) return false;
-    return this.currentPlayer.isActive && !this.currentPlayer.isEliminated && !this.currentPlayer.isFinished && this.currentPlayer.userId === this.myUserId;
+    return this.currentPlayer.isActive &&
+      !this.currentPlayer.isEliminated &&
+      !this.currentPlayer.isFinished &&
+      this.currentPlayer.userId === this.myUserId;
   }
 
   getHomeTokensCount(player: LudoPlayer): number {

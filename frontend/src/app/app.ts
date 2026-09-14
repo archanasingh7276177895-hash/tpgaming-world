@@ -52,7 +52,6 @@ export class AppComponent implements OnInit {
     this.socketService.connect();
     this.checkLoginStatus();
 
-    // Prime the initial browser history state
     if (!window.history.state || !window.history.state.page) {
       window.history.replaceState({ page: this.currentPage }, '', '');
     }
@@ -70,7 +69,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  // Intercept Android hardware or gesture back button
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
     if (this.activeMatchmakingConfig) {
@@ -134,11 +132,32 @@ export class AppComponent implements OnInit {
     const isBotMatch = this.userRole === 'admin' || gameData?.mode === 'bot' || Number(gameData?.fee || 0) === 0;
 
     const rawMode = gameData?.playerMode ?? gameData?.players ?? gameData?.mode;
-    const playerMode = Number(rawMode) === 4 ? 4 : 2;
+    const playerMode = (Number(rawMode) === 4 || rawMode === '4P') ? 4 : 2;
 
-    // BOT / ADMIN PRACTICE MODE: Immediate launch without socket matchmaking
+    // BOT / ADMIN PRACTICE MODE
     if (isBotMatch) {
       const myId = (this.currentUser?._id || this.currentUser?.id || 'player_user').toString();
+
+      // Build practice players dynamically based on playerMode
+      const practicePlayers = [
+        {
+          userId: myId,
+          username: this.userRole === 'admin' ? `${this.username} (Admin)` : this.username,
+          isBot: false
+        }
+      ];
+
+      if (playerMode === 4) {
+        practicePlayers.push(
+          { userId: 'bot_2', username: 'AI Bot 1 🤖', isBot: true },
+          { userId: 'bot_3', username: 'AI Bot 2 🤖', isBot: true },
+          { userId: 'bot_4', username: 'AI Bot 3 🤖', isBot: true }
+        );
+      } else {
+        practicePlayers.push(
+          { userId: 'bot_2', username: 'AI Computer 🤖', isBot: true }
+        );
+      }
 
       this.activeMatchRoom = {
         roomId: `BOT_${gameType.toUpperCase()}_${Date.now().toString().slice(-6)}`,
@@ -147,18 +166,7 @@ export class AppComponent implements OnInit {
         entryFee: 0,
         prizePool: 0,
         isBotMatch: true,
-        players: [
-          {
-            userId: myId,
-            username: this.userRole === 'admin' ? `${this.username} (Admin)` : this.username,
-            isBot: false
-          },
-          {
-            userId: 'bot_computer_player',
-            username: 'AI Computer 🤖',
-            isBot: true
-          }
-        ]
+        players: practicePlayers
       };
 
       this.activeMatchmakingConfig = null;

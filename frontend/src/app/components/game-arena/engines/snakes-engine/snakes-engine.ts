@@ -257,7 +257,10 @@ export class SnakesEngineComponent implements OnInit, OnDestroy {
 
   get isMyTurn(): boolean {
     if (this.isMeEliminated) return false;
-    return this.currentPlayer.isActive && !this.currentPlayer.isEliminated && !this.currentPlayer.isFinished && this.currentPlayer.userId === this.myUserId;
+    return this.currentPlayer.isActive &&
+      !this.currentPlayer.isEliminated &&
+      !this.currentPlayer.isFinished &&
+      this.currentPlayer.userId === this.myUserId;
   }
 
   updateActiveTurnIndices(): void {
@@ -344,7 +347,10 @@ export class SnakesEngineComponent implements OnInit, OnDestroy {
     if (isWinner) {
       this.currentPlayer.isFinished = true;
       if (this.room?.isBotMatch) {
-        this.finishMatch.emit({ won: this.currentPlayer.userId === this.myUserId, winnerName: this.currentPlayer.username });
+        this.finishMatch.emit({
+          won: this.currentPlayer.userId === this.myUserId,
+          winnerName: this.currentPlayer.username
+        });
       } else {
         this.socketService.claimRank(this.room.roomId, this.currentPlayer.userId);
       }
