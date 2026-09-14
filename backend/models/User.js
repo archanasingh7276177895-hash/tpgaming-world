@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      minlength: 7, // Must be > 6 characters
-      match: /^[a-zA-Z0-9_]+$/ // Fixed: Allows letters, numbers, and underscores
+      minlength: 7,
+      match: /^[a-zA-Z0-9_]+$/
     },
     password: {
       type: String,
@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
       default: 'user'
     },
     isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    isBlocked: {
       type: Boolean,
       default: false
     }

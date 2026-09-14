@@ -73,7 +73,13 @@ router.get('/stats', adminAuth, async (req, res) => {
 router.get('/users', adminAuth, async (req, res) => {
   try {
     const users = await User.find().select('-password').sort({ createdAt: -1 });
-    res.json(users);
+    // Normalize isBlocked to boolean so the frontend always receives true/false
+    const normalizedUsers = users.map(u => {
+      const doc = u.toObject();
+      doc.isBlocked = Boolean(doc.isBlocked);
+      return doc;
+    });
+    res.json(normalizedUsers);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching users.' });
   }
@@ -82,7 +88,7 @@ router.get('/users', adminAuth, async (req, res) => {
 // Adjust User Balance
 router.post('/users/:id/balance', adminAuth, async (req, res) => {
   try {
-    const { amount, type } = req.body; // type: 'add' or 'set'
+    const { amount, type } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
@@ -95,7 +101,7 @@ router.post('/users/:id/balance', adminAuth, async (req, res) => {
     user.walletBalance = Math.max(0, updatedBalance);
     await user.save();
 
-    // ⚡ Socket Broadcast for real-time wallet update
+    // Socket Broadcast for real-time wallet update
     const io = req.app.get('io');
     if (io) {
       io.emit('balance_updated', { username: user.username, newBalance: user.balance });
@@ -113,15 +119,50 @@ router.post('/users/:id/toggle-block', adminAuth, async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
-    user.isBlocked = !user.isBlocked;
+    if (user.role === 'admin' || user.isAdmin) {
+      return res.status(403).json({ message: 'Admin accounts cannot be blocked.' });
+    }
+
+    // Toggle boolean status (handles undefined or null)
+    user.isBlocked = !Boolean(user.isBlocked);
     await user.save();
 
     res.json({
+      success: true,
       message: `User ${user.username} is now ${user.isBlocked ? 'Blocked' : 'Active'}.`,
       isBlocked: user.isBlocked
     });
   } catch (err) {
+    console.error('TOGGLE BLOCK ERROR:', err);
     res.status(500).json({ message: 'Error toggling user block status.' });
+  }
+});
+
+// DELETE User Account (Admin Only)
+router.delete('/users/:id', adminAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    if (user.role === 'admin' || user.isAdmin) {
+      return res.status(403).json({ message: 'Admin accounts cannot be deleted.' });
+    }
+
+    const username = user.username;
+
+    // Permanently remove the user record
+    await User.findByIdAndDelete(req.params.id);
+
+    // Clean up associated transaction records
+    await Promise.all([
+      Deposit.deleteMany({ $or: [{ userId: req.params.id }, { username }] }),
+      Withdrawal.deleteMany({ $or: [{ userId: req.params.id }, { username }] })
+    ]);
+
+    res.json({ success: true, message: `Account "${username}" and all related transactions have been deleted.` });
+  } catch (err) {
+    console.error('DELETE USER ERROR:', err);
+    res.status(500).json({ message: 'Error deleting user account.' });
   }
 });
 
@@ -162,10 +203,9 @@ router.post('/deposits/approve/:id', adminAuth, async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { _id: user._id },
       { $inc: { balance: creditAmount, walletBalance: creditAmount } },
-      { new: true } // Returns the updated document
+      { new: true }
     );
 
-    // ⚡ Socket Broadcast for real-time wallet update
     const io = req.app.get('io');
     if (io && updatedUser) {
       io.emit('balance_updated', { username: updatedUser.username, newBalance: updatedUser.balance });
@@ -251,7 +291,6 @@ router.post('/withdrawals/reject/:id', adminAuth, async (req, res) => {
         { new: true }
       );
 
-      // ⚡ Socket Broadcast to refund balance in real-time
       const io = req.app.get('io');
       if (io && updatedUser) {
         io.emit('balance_updated', { username: updatedUser.username, newBalance: updatedUser.balance });
