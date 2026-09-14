@@ -83,7 +83,10 @@ export class AdminDashboardComponent implements OnInit {
   fetchUsers(): void {
     this.http.get<any[]>(`${this.BASE_URL}/users`, { headers: this.getAuthHeaders() }).subscribe({
       next: (data) => {
-        this.users = data || [];
+        this.users = (data || []).map(u => ({
+          ...u,
+          isBlocked: Boolean(u.isBlocked)
+        }));
         this.currentPage = 1;
       },
       error: (err) => console.error('Users error:', err)
@@ -172,7 +175,6 @@ export class AdminDashboardComponent implements OnInit {
     this.fetchWithdrawals();
   }
 
-  // --- Admin Action Handlers ---
   approveDeposit(id: string): void {
     this.http.post<any>(`${this.BASE_URL}/deposits/approve/${id}`, {}, { headers: this.getAuthHeaders() }).subscribe({
       next: (res) => {
@@ -240,11 +242,18 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   toggleBlockUser(userId: string, username: string): void {
-    if (!confirm(`Are you sure you want to change account status for ${username}?`)) return;
+    const targetUser = this.users.find(u => u._id === userId);
+    const actionName = targetUser?.isBlocked ? 'unblock' : 'block';
+
+    if (!confirm(`Are you sure you want to ${actionName} account for "${username}"?`)) return;
 
     this.http.post<any>(`${this.BASE_URL}/users/${userId}/toggle-block`, {}, { headers: this.getAuthHeaders() }).subscribe({
       next: (res) => {
         alert(res.message);
+        // Immediately mutate local object so change reflects in UI instantly
+        if (targetUser) {
+          targetUser.isBlocked = res.isBlocked;
+        }
         this.fetchUsers();
       },
       error: (err) => alert(err.error?.message || 'Error updating account status.')
@@ -260,6 +269,8 @@ export class AdminDashboardComponent implements OnInit {
     this.http.delete<any>(`${this.BASE_URL}/users/${userId}`, { headers: this.getAuthHeaders() }).subscribe({
       next: (res) => {
         alert(res.message || 'User successfully deleted.');
+        // Remove locally immediately
+        this.users = this.users.filter(u => u._id !== userId);
         this.fetchUsers();
         this.fetchStats();
       },

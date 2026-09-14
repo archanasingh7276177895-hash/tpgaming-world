@@ -234,6 +234,8 @@
             <td>
               <div class="action-btns">
                 <button class="btn-edit" (click)="adjustBalance(u._id, u.username)">⚡ Adjust Balance</button>
+                
+                <!-- Block/Unblock Button (For Non-Admin accounts) -->
                 <button 
                   *ngIf="u.role !== 'admin'"
                   class="btn-toggle" 
@@ -242,6 +244,8 @@
                   (click)="toggleBlockUser(u._id, u.username)">
                   {{ u.isBlocked ? 'Unblock' : 'Block' }}
                 </button>
+
+                <!-- Delete User Button (For Non-Admin accounts) -->
                 <button 
                   *ngIf="u.role !== 'admin'"
                   class="btn-delete" 

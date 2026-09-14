@@ -213,7 +213,9 @@
 
 .action-btns {
   display: flex;
+  align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .btn-approve {
@@ -256,14 +258,41 @@
   border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 .btn-block {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+.btn-block:hover {
+  background: #ef4444;
+  color: #ffffff;
 }
 .btn-unblock {
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.btn-unblock:hover {
+  background: #10b981;
+  color: #ffffff;
+}
+
+/* Dedicated Delete Button Styling */
+.btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #f87171;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-delete:hover {
+  background: #ef4444;
+  color: #ffffff;
 }
 
 /* Pagination */
@@ -321,19 +350,4 @@
   color: #fff;
   font-size: 26px;
   cursor: pointer;
-}
-.btn-delete {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid #ef4444;
-  color: #f87171;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-delete:hover {
-  background: #ef4444;
-  color: #ffffff;
 }
