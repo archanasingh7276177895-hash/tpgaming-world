@@ -123,7 +123,6 @@
       </table>
     </div>
 
-    <!-- Pagination Controls -->
     <div class="pagination-footer" *ngIf="filteredDeposits.length > pageSize">
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="pagination-btns">
@@ -193,7 +192,6 @@
       </table>
     </div>
 
-    <!-- Pagination Controls -->
     <div class="pagination-footer" *ngIf="filteredWithdrawals.length > pageSize">
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="pagination-btns">
@@ -244,6 +242,12 @@
                   (click)="toggleBlockUser(u._id, u.username)">
                   {{ u.isBlocked ? 'Unblock' : 'Block' }}
                 </button>
+                <button 
+                  *ngIf="u.role !== 'admin'"
+                  class="btn-delete" 
+                  (click)="deleteUser(u._id, u.username)">
+                  🗑️ Delete
+                </button>
               </div>
             </td>
           </tr>
@@ -251,7 +255,6 @@
       </table>
     </div>
 
-    <!-- Pagination Controls -->
     <div class="pagination-footer" *ngIf="filteredUsers.length > pageSize">
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="pagination-btns">

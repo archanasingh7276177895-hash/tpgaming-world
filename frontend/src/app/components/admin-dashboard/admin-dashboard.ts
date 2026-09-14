@@ -90,7 +90,6 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // --- Filtering and Sorting Getters ---
   private sortList(list: any[]): any[] {
     return [...list].sort((a, b) => {
       if (this.sortBy === 'date_desc') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -249,6 +248,22 @@ export class AdminDashboardComponent implements OnInit {
         this.fetchUsers();
       },
       error: (err) => alert(err.error?.message || 'Error updating account status.')
+    });
+  }
+
+  deleteUser(userId: string, username: string): void {
+    const isConfirmed = confirm(
+      `⚠️ WARNING: Are you sure you want to permanently delete user "${username}"?\n\nThis will remove their account and wipe their transaction history. This action cannot be undone.`
+    );
+    if (!isConfirmed) return;
+
+    this.http.delete<any>(`${this.BASE_URL}/users/${userId}`, { headers: this.getAuthHeaders() }).subscribe({
+      next: (res) => {
+        alert(res.message || 'User successfully deleted.');
+        this.fetchUsers();
+        this.fetchStats();
+      },
+      error: (err) => alert(err.error?.message || 'Error deleting user account.')
     });
   }
 
