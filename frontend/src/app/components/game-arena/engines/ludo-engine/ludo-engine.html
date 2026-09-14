@@ -1,8 +1,8 @@
 <div class="ludo-stage-wrapper">
 
-  <!-- TOP DOCK BAR (Player 0 / Green & Player 1 / Yellow) -->
+  <!-- TOP DOCKS BAR (Player 0 / Green & Player 1 / Yellow) -->
   <div class="dock-bar top-dock-bar">
-    <!-- Player 0 Dock (Green) -->
+    <!-- Green Dock (Player 0 - Top Left) -->
     <div 
       class="player-dock dock-green" 
       *ngIf="players[0]?.isActive"
@@ -28,8 +28,10 @@
         <span *ngIf="players[0]?.isFinished" class="finished-txt">DONE</span>
       </div>
     </div>
+    <!-- Spacer when Player 0 is inactive -->
+    <div class="dock-spacer" *ngIf="!players[0]?.isActive"></div>
 
-    <!-- Player 1 Dock (Yellow) -->
+    <!-- Yellow Dock (Player 1 - Top Right) -->
     <div 
       class="player-dock dock-yellow" 
       *ngIf="players[1]?.isActive"
@@ -55,9 +57,11 @@
         <span class="rank-badge" *ngIf="players[1]?.isFinished">Rank #{{ players[1]?.rank || 1 }} 👑</span>
       </div>
     </div>
+    <!-- Spacer when Player 1 is inactive -->
+    <div class="dock-spacer" *ngIf="!players[1]?.isActive"></div>
   </div>
 
-  <!-- RESPONSIVE 15x15 LUDO BOARD CONTAINER -->
+  <!-- 15x15 LUDO BOARD GRID FRAME -->
   <div class="board-frame">
     <div class="ludo-board">
 
@@ -137,7 +141,7 @@
         </div>
       </div>
 
-      <!-- Center Home Triangles (Vector SVG Rendering) -->
+      <!-- Center Home (SVG Polygons Meeting at 50,50) -->
       <div class="board-center-triangle">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="center-svg">
           <polygon points="0,0 100,0 50,50" class="poly-yellow" />
@@ -146,6 +150,7 @@
           <polygon points="0,100 0,0 50,50" class="poly-green" />
         </svg>
 
+        <!-- Center Token Counters -->
         <span class="home-counter counter-yellow" *ngIf="getHomeTokensCount(players[1]) > 0">{{ getHomeTokensCount(players[1]) }}</span>
         <span class="home-counter counter-blue" *ngIf="getHomeTokensCount(players[2]) > 0">{{ getHomeTokensCount(players[2]) }}</span>
         <span class="home-counter counter-red" *ngIf="getHomeTokensCount(players[3]) > 0">{{ getHomeTokensCount(players[3]) }}</span>
@@ -192,9 +197,9 @@
     </div>
   </div>
 
-  <!-- BOTTOM DOCK BAR (Player 3 / Red & Player 2 / Blue) -->
+  <!-- BOTTOM DOCKS BAR (Player 3 / Red & Player 2 / Blue) -->
   <div class="dock-bar bottom-dock-bar">
-    <!-- Player 3 Dock (Red) -->
+    <!-- Red Dock (Player 3 - Bottom Left) -->
     <div 
       class="player-dock dock-red" 
       *ngIf="players[3]?.isActive"
@@ -202,6 +207,13 @@
       [class.dock-eliminated]="players[3]?.isEliminated"
       [class.dock-winner]="players[3]?.isFinished"
       (click)="rollDice(3)">
+      <div class="dock-dice-box">
+        <div class="dice-face" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">
+          <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
+        </div>
+        <span *ngIf="players[3]?.isEliminated" class="eliminated-txt">OUT</span>
+        <span *ngIf="players[3]?.isFinished" class="finished-txt">DONE</span>
+      </div>
       <div class="dock-badge red-badge">
         <span class="dock-user-label">{{ players[3].username }}</span>
         <div class="strike-dots" *ngIf="!players[3]?.isFinished">
@@ -212,16 +224,11 @@
         <span class="dock-timer-pill" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">⏱️ {{ turnTimer }}s</span>
         <span class="rank-badge" *ngIf="players[3]?.isFinished">Rank #{{ players[3]?.rank || 1 }} 👑</span>
       </div>
-      <div class="dock-dice-box">
-        <div class="dice-face" *ngIf="currentTurnIndex === 3 && !players[3]?.isEliminated && !players[3]?.isFinished">
-          <ng-container [ngTemplateOutlet]="dicePips" [ngTemplateOutletContext]="{ val: diceValue }"></ng-container>
-        </div>
-        <span *ngIf="players[3]?.isEliminated" class="eliminated-txt">OUT</span>
-        <span *ngIf="players[3]?.isFinished" class="finished-txt">DONE</span>
-      </div>
     </div>
+    <!-- Spacer when Player 3 is inactive -->
+    <div class="dock-spacer" *ngIf="!players[3]?.isActive"></div>
 
-    <!-- Player 2 Dock (Blue) -->
+    <!-- Blue Dock (Player 2 - Bottom Right) -->
     <div 
       class="player-dock dock-blue" 
       *ngIf="players[2]?.isActive"
@@ -247,6 +254,8 @@
         <span class="rank-badge" *ngIf="players[2]?.isFinished">Rank #{{ players[2]?.rank || 1 }} 👑</span>
       </div>
     </div>
+    <!-- Spacer when Player 2 is inactive -->
+    <div class="dock-spacer" *ngIf="!players[2]?.isActive"></div>
   </div>
 
   <!-- Eliminated Modal Overlay -->

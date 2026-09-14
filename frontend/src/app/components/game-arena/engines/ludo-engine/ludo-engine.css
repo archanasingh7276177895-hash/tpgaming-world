@@ -9,7 +9,7 @@
   box-sizing: border-box;
 }
 
-/* Master Vertical Stage */
+/* Master Stage Layout */
 .ludo-stage-wrapper {
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@
   box-sizing: border-box;
 }
 
-/* Docks Bars */
+/* ================= DOCK BARS & SPACERS ================= */
 .dock-bar {
   width: 100%;
   display: flex;
@@ -32,6 +32,19 @@
   gap: 8px;
   flex-shrink: 0;
   z-index: 10;
+}
+
+.top-dock-bar {
+  margin-bottom: auto;
+}
+
+.bottom-dock-bar {
+  margin-top: auto;
+}
+
+.dock-spacer {
+  flex: 1;
+  min-width: 120px;
 }
 
 .player-dock {
@@ -58,13 +71,19 @@
 .player-dock.dock-eliminated {
   opacity: 0.5;
   filter: grayscale(0.8);
+  cursor: not-allowed;
 }
 
-/* Color theme borders for docks */
-.dock-green.dock-active { border-color: #22c55e; }
+.player-dock.dock-winner {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+/* Dock color borders */
+.dock-green.dock-active  { border-color: #22c55e; }
 .dock-yellow.dock-active { border-color: #eab308; }
-.dock-blue.dock-active { border-color: #3b82f6; }
-.dock-red.dock-active { border-color: #ef4444; }
+.dock-blue.dock-active   { border-color: #3b82f6; }
+.dock-red.dock-active    { border-color: #ef4444; }
 
 .dock-badge {
   display: flex;
@@ -136,7 +155,7 @@
   font-weight: 900;
 }
 
-/* Pip Dice Matrix */
+/* ================= PIP DICE MATRIX ================= */
 .dice-face {
   width: 100%;
   height: 100%;
@@ -161,23 +180,24 @@
   border-radius: 50%;
 }
 
-.pip-1 { top: 10px; left: 10px; }
-.pip-tl { top: 3px; left: 3px; }
+.pip-1  { top: 10px; left: 10px; }
+.pip-tl { top: 3px;  left: 3px; }
 .pip-br { bottom: 3px; right: 3px; }
-.pip-tr { top: 3px; right: 3px; }
+.pip-tr { top: 3px;  right: 3px; }
 .pip-bl { bottom: 3px; left: 3px; }
 .pip-ml { top: 10px; left: 3px; }
 .pip-mr { top: 10px; right: 3px; }
 
 /* ================= BOARD FRAME & 15x15 GRID ================= */
 .board-frame {
-  width: min(94vw, 55vh);
-  height: min(94vw, 55vh);
+  width: min(94vw, 54vh);
+  height: min(94vw, 54vh);
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin: auto 0;
 }
 
 .ludo-board {
@@ -221,7 +241,7 @@
   font-size: min(2.5vw, 1.3vh);
   color: #ffffff;
   font-weight: 800;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .quad-inner-white {
@@ -253,7 +273,7 @@
   justify-content: center;
 }
 
-/* Center Home (Vector Triangle SVG) */
+/* ================= CENTER HOME (VECTOR SVG FIX) ================= */
 .board-center-triangle {
   position: absolute;
   top: 40%;
@@ -280,14 +300,16 @@
   font-size: min(2.4vw, 1.4vh);
   font-weight: bold;
   color: #ffffff;
+  z-index: 3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.counter-yellow { top: 8%; left: 50%; transform: translateX(-50%); }
-.counter-blue   { right: 8%; top: 50%; transform: translateY(-50%); }
-.counter-red    { bottom: 8%; left: 50%; transform: translateX(-50%); }
-.counter-green  { left: 8%; top: 50%; transform: translateY(-50%); }
+.counter-yellow { top: 6%; left: 50%; transform: translateX(-50%); }
+.counter-blue   { right: 6%; top: 50%; transform: translateY(-50%); }
+.counter-red    { bottom: 6%; left: 50%; transform: translateX(-50%); }
+.counter-green  { left: 6%; top: 50%; transform: translateY(-50%); }
 
-/* 15x15 Track Grid */
+/* ================= 15x15 TRACK GRID ================= */
 .track-grid {
   position: absolute;
   inset: 0;
@@ -307,7 +329,7 @@
   box-sizing: border-box;
 }
 
-/* Home Lanes */
+/* Track Paths */
 .cell-green  { background: rgba(34, 197, 94, 0.4) !important; }
 .cell-yellow { background: rgba(234, 179, 8, 0.4) !important; }
 .cell-blue   { background: rgba(59, 130, 246, 0.4) !important; }
@@ -324,7 +346,7 @@
   font-weight: bold;
 }
 
-/* Tokens / Pawns */
+/* ================= TOKENS & PAWNS ================= */
 .pawn-pin {
   width: 70%;
   height: 70%;
@@ -348,7 +370,7 @@
 }
 
 @keyframes pawnPulse {
-  0% { transform: scale(1); box-shadow: 0 0 4px #facc15; }
+  0%   { transform: scale(1); box-shadow: 0 0 4px #facc15; }
   100% { transform: scale(1.25); box-shadow: 0 0 10px #facc15; }
 }
 
@@ -366,7 +388,7 @@
   height: 45%;
 }
 
-/* Eliminated Overlay */
+/* ================= ELIMINATED MODAL ================= */
 .eliminated-overlay {
   position: fixed;
   inset: 0;
