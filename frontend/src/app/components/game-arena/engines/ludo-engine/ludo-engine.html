@@ -1,8 +1,8 @@
 <div class="ludo-stage-wrapper">
 
-  <!-- TOP DOCKS BAR (Player 0 / Green & Player 1 / Yellow) -->
+  <!-- TOP DOCKS BAR (Green / Yellow) -->
   <div class="dock-bar top-dock-bar">
-    <!-- Green Dock (Player 0 - Top Left) -->
+    <!-- Green (Player 0 - Top Left) -->
     <div 
       class="player-dock dock-green" 
       *ngIf="players[0]?.isActive"
@@ -28,10 +28,9 @@
         <span *ngIf="players[0]?.isFinished" class="finished-txt">DONE</span>
       </div>
     </div>
-    <!-- Spacer when Player 0 is inactive -->
     <div class="dock-spacer" *ngIf="!players[0]?.isActive"></div>
 
-    <!-- Yellow Dock (Player 1 - Top Right) -->
+    <!-- Yellow (Player 1 - Top Right) -->
     <div 
       class="player-dock dock-yellow" 
       *ngIf="players[1]?.isActive"
@@ -57,15 +56,14 @@
         <span class="rank-badge" *ngIf="players[1]?.isFinished">Rank #{{ players[1]?.rank || 1 }} 👑</span>
       </div>
     </div>
-    <!-- Spacer when Player 1 is inactive -->
     <div class="dock-spacer" *ngIf="!players[1]?.isActive"></div>
   </div>
 
-  <!-- 15x15 LUDO BOARD GRID FRAME -->
+  <!-- 15x15 LUDO BOARD CONTAINER -->
   <div class="board-frame">
     <div class="ludo-board">
 
-      <!-- Green Yard (Top-Left) -->
+      <!-- Green Base (Top-Left) -->
       <div class="quadrant quad-green" [class.quad-disabled]="!players[0]?.isActive || players[0]?.isEliminated">
         <div class="quad-header-bar" *ngIf="players[0]?.isActive">
           <span class="player-tag-name">{{ players[0].username }}</span>
@@ -77,14 +75,14 @@
                 *ngIf="t.isHome && players[0]?.isActive && !players[0]?.isEliminated" 
                 class="pawn-pin green-pin" 
                 [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 0 && isMyTurn"
-                (click)="moveToken(players[0], t.id); $event.stopPropagation()">
+                (click)="onTokenClicked(players[0], t.id, $event)">
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Yellow Yard (Top-Right) -->
+      <!-- Yellow Base (Top-Right) -->
       <div class="quadrant quad-yellow" [class.quad-disabled]="!players[1]?.isActive || players[1]?.isEliminated">
         <div class="quad-header-bar" *ngIf="players[1]?.isActive">
           <span class="player-tag-name">{{ players[1].username }}</span>
@@ -96,14 +94,14 @@
                 *ngIf="t.isHome && players[1]?.isActive && !players[1]?.isEliminated" 
                 class="pawn-pin yellow-pin" 
                 [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 1 && isMyTurn"
-                (click)="moveToken(players[1], t.id); $event.stopPropagation()">
+                (click)="onTokenClicked(players[1], t.id, $event)">
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Red Yard (Bottom-Left) -->
+      <!-- Red Base (Bottom-Left) -->
       <div class="quadrant quad-red" [class.quad-disabled]="!players[3]?.isActive || players[3]?.isEliminated">
         <div class="quad-header-bar" *ngIf="players[3]?.isActive">
           <span class="player-tag-name">{{ players[3].username }}</span>
@@ -115,14 +113,14 @@
                 *ngIf="t.isHome && players[3]?.isActive && !players[3]?.isEliminated" 
                 class="pawn-pin red-pin" 
                 [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 3 && isMyTurn"
-                (click)="moveToken(players[3], t.id); $event.stopPropagation()">
+                (click)="onTokenClicked(players[3], t.id, $event)">
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Blue Yard (Bottom-Right) -->
+      <!-- Blue Base (Bottom-Right) -->
       <div class="quadrant quad-blue" [class.quad-disabled]="!players[2]?.isActive || players[2]?.isEliminated">
         <div class="quad-header-bar" *ngIf="players[2]?.isActive">
           <span class="player-tag-name">{{ players[2].username }}</span>
@@ -134,14 +132,14 @@
                 *ngIf="t.isHome && players[2]?.isActive && !players[2]?.isEliminated" 
                 class="pawn-pin blue-pin" 
                 [class.movable]="movableTokenIds.includes(t.id) && currentTurnIndex === 2 && isMyTurn"
-                (click)="moveToken(players[2], t.id); $event.stopPropagation()">
+                (click)="onTokenClicked(players[2], t.id, $event)">
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Center Home (SVG Polygons Meeting at 50,50) -->
+      <!-- Center Home (SVG Vector Triangles) -->
       <div class="board-center-triangle">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="center-svg">
           <polygon points="0,0 100,0 50,50" class="poly-yellow" />
@@ -150,14 +148,13 @@
           <polygon points="0,100 0,0 50,50" class="poly-green" />
         </svg>
 
-        <!-- Center Token Counters -->
         <span class="home-counter counter-yellow" *ngIf="getHomeTokensCount(players[1]) > 0">{{ getHomeTokensCount(players[1]) }}</span>
         <span class="home-counter counter-blue" *ngIf="getHomeTokensCount(players[2]) > 0">{{ getHomeTokensCount(players[2]) }}</span>
         <span class="home-counter counter-red" *ngIf="getHomeTokensCount(players[3]) > 0">{{ getHomeTokensCount(players[3]) }}</span>
         <span class="home-counter counter-green" *ngIf="getHomeTokensCount(players[0]) > 0">{{ getHomeTokensCount(players[0]) }}</span>
       </div>
 
-      <!-- 15x15 Track Cells -->
+      <!-- 15x15 Track Grid -->
       <div class="track-grid">
         <ng-container *ngFor="let r of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
           <ng-container *ngFor="let c of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
@@ -185,7 +182,7 @@
                   [class.stacked-mini]="getTokensAtCell(r, c).length > 1"
                   [ngClass]="item.player.color + '-pin'"
                   [class.movable]="movableTokenIds.includes(item.token.id) && item.player.color === currentPlayer.color && isMyTurn"
-                  (click)="moveToken(item.player, item.token.id); $event.stopPropagation()">
+                  (click)="onTokenClicked(item.player, item.token.id, $event)">
                 </div>
               </div>
 
@@ -197,9 +194,9 @@
     </div>
   </div>
 
-  <!-- BOTTOM DOCKS BAR (Player 3 / Red & Player 2 / Blue) -->
+  <!-- BOTTOM DOCKS BAR (Red / Blue) -->
   <div class="dock-bar bottom-dock-bar">
-    <!-- Red Dock (Player 3 - Bottom Left) -->
+    <!-- Red (Player 3 - Bottom Left) -->
     <div 
       class="player-dock dock-red" 
       *ngIf="players[3]?.isActive"
@@ -225,10 +222,9 @@
         <span class="rank-badge" *ngIf="players[3]?.isFinished">Rank #{{ players[3]?.rank || 1 }} 👑</span>
       </div>
     </div>
-    <!-- Spacer when Player 3 is inactive -->
     <div class="dock-spacer" *ngIf="!players[3]?.isActive"></div>
 
-    <!-- Blue Dock (Player 2 - Bottom Right) -->
+    <!-- Blue (Player 2 - Bottom Right) -->
     <div 
       class="player-dock dock-blue" 
       *ngIf="players[2]?.isActive"
@@ -254,11 +250,10 @@
         <span class="rank-badge" *ngIf="players[2]?.isFinished">Rank #{{ players[2]?.rank || 1 }} 👑</span>
       </div>
     </div>
-    <!-- Spacer when Player 2 is inactive -->
     <div class="dock-spacer" *ngIf="!players[2]?.isActive"></div>
   </div>
 
-  <!-- Eliminated Modal Overlay -->
+  <!-- Eliminated Overlay -->
   <div class="eliminated-overlay" *ngIf="isMeEliminated">
     <div class="eliminated-card">
       <span class="danger-icon">❌</span>
